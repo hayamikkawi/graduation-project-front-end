@@ -46,7 +46,7 @@ const SignUpScreen = ({navigation}) => {
             isValid = true
          }
   }
-  const onSignupPressed = () => {
+  const onSignupPressed = async() => {
       validate()
       if(! isValid) return
       axios.post(`${API_URL}/users/signup`, {
@@ -64,8 +64,12 @@ const SignUpScreen = ({navigation}) => {
         //save token and move to home page 
         //add saving token 
         const jsonRes = res.data.token
+        const user = res.data.user
+
         let token = jsonRes
         await SecureStore.setItemAsync('secureToken', token);
+        
+        await SecureStore.setItemAsync('user',  JSON.stringify(user))
         navigation.navigate("Home")
       }).catch((err) =>{
         console.error(err)

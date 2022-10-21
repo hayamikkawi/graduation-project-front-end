@@ -11,14 +11,28 @@ import SignUpDriver from './src/screens/SignUpDriverScreen/sign-up-driver.js';
 import SearchScreenMap from './src/screens/SearchScreen2/search-screen2.js';
 import axios from 'axios';
 import API_URL from './src/App_URL.js';
-import SecureStore from 'expo-secure-store'
+import *   as SecureStore from 'expo-secure-store'
 import { useState, useEffect } from 'react'
 
 export default function App() {
   const [isSigned, setIsSigned] = useState(false)
   useEffect(() => {
+    async function isLoggedIn(){
+      //console.warn('heyyy')
+      //await SecureStore.setItemAsync('secureToken', '')
+      const storedToken = await SecureStore.getItemAsync('secureToken')
+      console.warn(storedToken)
+      if (!storedToken || storedToken.length == 0) {
+        setIsSigned(false)
+      }
+      else {
+        console.log('signed')
+        setIsSigned(true)
+      }
+    }
+    isLoggedIn()
     return () => {
-      isLoggedIn()
+      
     };
   }, [])
   let [fontsLoaded] = useFonts({
@@ -31,30 +45,6 @@ export default function App() {
     return <Text>hey</Text>
   }
   // var isSigned = false
-  const isLoggedIn = async () => {
-    const storedToken = await SecureStore.getItemAsync('secureToken')
-    console.log(storedToken)
-    if (!storedToken || storedToken.length == 0) {
-       setIsSigned(false)
-    }
-    else {
-      axios.get(`${API_URL}/auth`, {
-        headers: storedToken
-      }).then((res) => {
-        print(storedToken)
-        if (res.status == 200) {
-          console.log('logged in without need to log in')
-          role = res.data.role
-          console.log(role)
-          setIsSigned(true)
-        } else {
-          isSigned = false
-        }
-       
-      })
-    }
-  }
-
   const Stack = createNativeStackNavigator()
   var role = ''
 
@@ -63,7 +53,9 @@ export default function App() {
     !isSigned ?
 
       <NavigationContainer >
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{
+        headerShown: false
+      }}>
           <Stack.Screen
             name="Pre"
             component={FirstScreen}
@@ -138,7 +130,9 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
       : <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{
+          headerShown: false
+        }}>
           <Stack.Screen
             name="Home"
             component={HomeScreen}

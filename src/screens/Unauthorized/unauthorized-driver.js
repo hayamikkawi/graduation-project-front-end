@@ -7,18 +7,19 @@ import Unauthorized from '../../../assets/myIcons/401.png'
 const UnauthorizedDriver = () => {
     return (
         <ScrollView style={styles.root}>
-            <CustomHeader
+            <View style={styles.upcontainer}>
+                <CustomHeader
                     text={'You are not currently a valid driver'}
                 />
-            <Image 
-                source={Unauthorized}
-                style={styles.image} 
-                resizeMode="contain"
-            />
-            
+                <Image
+                    source={Unauthorized}
+                    style={styles.image}
+                    resizeMode="contain"
+                />
+            </View>
             <View style={styles.container}>
-                
-            <CustomButton
+
+                <CustomButton
                     text={'Become a driver'}
                     width={'60%'}
                     style={styles.btn}
@@ -33,7 +34,8 @@ const styles = StyleSheet.create({
     root: {
         backgroundColor: '#262a2d',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        // padding:'25%'
     },
     container: {
         width: '90%',
@@ -44,17 +46,25 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-around',
         // borderWidth: 1, 
-        // borderColor: 'yellow'
+        // borderColor: 'blue', 
 
-    }, 
+    },
     image: {
-        width: '100%', 
-        height: '250%', 
+        width: '100%',
+        height: '200%', 
+        marginTop:'-50%', 
+        // borderWidth: 2, 
+        // borderColor: 'red'
+       // height: '250%',
+
+    },
+    upcontainer:{
+        width: '90%', 
+        height: '200%',
+        // borderColor:'yellow', 
         // borderWidth: 1, 
-        // borderColor: 'yellow'
-    }, 
-    // btn: {
-    //     marginHorizontal: '20%'
-    // }
+        marginVertical: '15%', 
+        marginHorizontal: '5%'
+    }
 })
 export default UnauthorizedDriver

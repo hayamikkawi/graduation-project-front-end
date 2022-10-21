@@ -1,0 +1,126 @@
+import { View, Text, StyleSheet, Image } from 'react-native'
+import React from 'react'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import ProfilePic from '../ProfilePicture/profile-pic';
+import CarSeat from '../../../assets/myIcons/car-chair.png'
+import NoSmoke from '../../../assets/myIcons/no-smoke.png'
+import Female from '../../../assets/myIcons/female.png'
+import Disabled from '../../../assets/myIcons/disabled.png'
+import NoAnimal from '../../../assets/myIcons/no-pets.png'
+import NoChildren from '../../../assets/myIcons/children.png'
+import AC from '../../../assets/myIcons/air-conditioner.png'
+//temp 
+import DriverPic from '../../../assets/user/F38.jpg'
+import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
+
+
+const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navigation }) => {
+    const icons = {
+        'noSmoking': NoSmoke, 'girlsOnly': Female,
+        'seatForDisabled': Disabled, 'noPets': NoAnimal, 'noChildren': NoChildren,
+        'AC': AC, 'middleSeatEmpty': CarSeat
+    }
+    return (
+        <View>
+            {nextIcon &&
+                <View>
+                    <View style={styles.container}>
+                        <Text style={styles.text}>From:</Text>
+                        <Text style={styles.text}>{ride.source}</Text>
+                    </View>
+                    <View style={styles.container}>
+                        <Text style={styles.text}> To:   </Text>
+                        <Text style={styles.text}>{ride.destination}</Text>
+                    </View>
+                </View>
+            }
+            {!nextIcon &&
+                <View>
+                    <Pressable style={styles.container} onPress={() => {
+                        navigation.navigate('SearchMap',
+                            {
+                                latitude: ride.sourceLatitude,
+                                longitude: ride.sourceLongitude
+                            })
+                    }}>
+                        <Text style={styles.text}>From:</Text>
+                        <View style={styles.flex}>
+                            <Text style={styles.text}>{ride.source}</Text>
+                            <Ionicons name='caret-forward' size={25} color={'#1093c9'} />
+                        </View>
+                    </Pressable>
+                    <Pressable style={styles.container} onPress={() => {
+                        navigation.navigate('SearchMap',
+                            {
+                                latitude: ride.destinationLatitude,
+                                longitude: ride.destinationLongitude
+                            })
+                    }}>
+                        <Text style={styles.text}> To:   </Text>
+                        <View style={styles.flex}>
+                            <Text style={styles.text}>{ride.destination}</Text>
+                            <Ionicons name='caret-forward' size={25} color={'#1093c9'} />
+                        </View>
+                    </Pressable>
+                </View>
+            }
+            <View style={styles.container}>
+                <Text style={styles.text}> At:   </Text>
+                <Text style={styles.text}>{ride.time}</Text>
+            </View>
+            {withDriver &&
+                <View style={styles.container}>
+                    <ProfilePic source={DriverPic} radius={60} />
+                    <Text style={styles.text}>{ride.driver.name}</Text>
+                </View>
+            }
+            {nextIcon &&
+                <View style={styles.bottomContainer}>
+                    <View style={styles.iconsContainer}>
+                        {ride.properties.map((property) => {
+                            return <Image source={icons[property]} style={styles.icon} resizeMode="contain" key={icons[property]} />
+                        })}
+                    </View>
+                    <View>
+                        <Ionicons name='caret-forward' size={30} color={'#1093c9'} />
+                    </View>
+
+                </View>
+            }
+        </View>
+    )
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '3%'
+    },
+    iconsContainer: {
+        flexDirection: 'row',
+        alignContent: 'flex-end',
+        padding: '3%'
+    },
+    bottomContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    text: {
+        fontFamily: 'kanyon-medium',
+        fontSize: 17,
+        color: 'white'
+    },
+    icon: {
+        width: 25,
+        height: 25,
+    },
+    flex: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center'
+    }
+})
+export default SearchResultCardInner

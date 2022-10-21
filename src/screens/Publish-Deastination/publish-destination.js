@@ -5,7 +5,6 @@ import MapSearch from '../../components/MapSearch/map-search'
 
 const PublishDestination = ({ navigation, route }) => {
   const onChooseDestination= (data) => {
-    console.warn(data.place_id)
     navigation.navigate("Publish-Date-Details", {
       destDescription: data.description,
       destId: data.place_id, 

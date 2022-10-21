@@ -3,10 +3,11 @@ import React from 'react'
 import Transport from '../../../assets/transport4.png'
 import CustomInput from '../../components/CustomInput'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import DateTimePicker  from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from 'react'
 import axios from 'axios';
 import API_URL from '../../App_URL';
+import * as SecureStore from 'expo-secure-store'
 
 const SearchPage = ({ navigation }) => {
     const { height } = useWindowDimensions()
@@ -25,7 +26,7 @@ const SearchPage = ({ navigation }) => {
         setSourceId(sourceId)
     }
     const onChangeText = (newVal) => {
-        if (newVal < 0 || newVal > 4) {
+        if (newVal < 0 || newVal > 5) {
             return
         } else {
             setNumberOfPassengers(newVal)
@@ -34,21 +35,123 @@ const SearchPage = ({ navigation }) => {
     const setDateVal = (newDate) => {
         setDate(newDate)
     }
-    const onSearchClicked = () => {
+    const onSearchClicked = async () => {
+        const token = await SecureStore.getItemAsync('secureToken')
         axios.post(`${API_URL}/rides/search`, {
             sourceId,
             destinationId,
             numberOfPassengers,
             date
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
         }).then((res) => {
+            const dummyData = [{
+                id: 1,
+                source: 'Nablus - 5',
+                sourceLatitude: 32.2227, 
+                sourceLongitude: 35.2621, 
+                distancefromSource: 5.0,
+                destination: 'Ramallah -1',
+                destinationLatitude: 31.9038, 
+                destinationLongitude: 35.2034, 
+                distanceFromDestination: 1.0,
+                time: '08:00',
+                driver: {
+                    id: 1,
+                    name: 'jana mikkawi', 
+                   // profilePicture: driverPP
+                },
+                passengers: [{ name: 'Haya Mikkawi' }, { name: 'Aya Mikkawi' }]
+                ,
+                properties: ['girlsOnly', 'noSmoking', 'seatForDisabled'],
+                availableSeats: 5,
+                allowInstanceReservation: true
+            }, {
+                id: 2,
+                source: 'Nablus - 3',
+                sourceLatitude: 32.2227, 
+                sourceLongitude: 35.2621,
+                distancefromSource: 3.0,  
+                destination: 'Ramallah - 4',
+                destinationLatitude: 31.9038, 
+                destinationLongitude: 35.2034,
+                distanceFromDestination: 4.0, 
+                time: '13:00',
+                driver: {
+                    name: 'jana'
+                },
+                passengers: [],
+                properties: ['noPets', 'noChildren', 'AC'],
+                availableSeats: 5,
+                allowInstanceReservation: false
+            }, 
+            {
+                id: 3,
+                source: ' جامعة النجاح الوطنية الحرم القديم في نابلس',
+                sourceLatitude: 32.2227, 
+                sourceLongitude: 35.2621,
+                distancefromSource: 0.5,  
+                destination: 'Ramallah-far - 11',
+                destinationLatitude: 31.9038, 
+                destinationLongitude: 35.2034,
+                distanceFromDestination: 11.2, 
+                time: '17:30',
+                driver: {
+                    name: 'jana'
+                },
+                passengers: [],
+                properties: ['girlsOnly', 'noPets', 'middleSeatEmpty'],
+                availableSeats: 5,
+                allowInstanceReservation: false
+            }, {
+                id: 4,
+                source: 'Nablus - 14',
+                sourceLatitude: 32.2227, 
+                sourceLongitude: 35.2621,
+                distancefromSource: 14.0,  
+                destination: 'Ramallah - 0',
+                destinationLatitude: 31.9038, 
+                destinationLongitude: 35.2034,
+                distanceFromDestination: 0.7, 
+                time: '10:00',
+                driver: {
+                    name: 'jana'
+                },
+                passengers: [],
+                properties: ['noPets', 'noChildren', 'AC'],
+                availableSeats: 5,
+                allowInstanceReservation: false
+            }, {
+                id: 5,
+                source: 'Nablus - 3.5',
+                sourceLatitude: 32.2227, 
+                sourceLongitude: 35.2621,
+                distancefromSource: 3.5,  
+                destination: 'Ramallah - 19',
+                destinationLatitude: 31.9038, 
+                destinationLongitude: 35.2034,
+                distanceFromDestination : 19.1, 
+                time: '07:30',
+                driver: {
+                    name: 'jana'
+                },
+                passengers: [],
+                properties: ['girlsOnly', 'noPets', 'noChildren', 'AC'],
+                availableSeats: 5,
+                allowInstanceReservation: false
+            }
+            ]
+            navigation.navigate('SearchResult', dummyData)
             if (res.status == 400) {
 
             } else if (res.status == 404) {
 
             } else if (res.status == 200) {
-
+                //const realResults = res.data
             }
-            navigation.navigate('SearchResult')
+
         }).catch((err) => {
             console.log(err)
         })
@@ -162,7 +265,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '110%',
-        marginLeft: '-5%', 
+        marginLeft: '-5%',
         marginTop: '-10%'
 
     },

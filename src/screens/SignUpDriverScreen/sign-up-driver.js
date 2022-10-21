@@ -16,6 +16,7 @@ const SignUpDriver = ({ route, navigation }) => {
   const [hasPermession, setHasPermession] = useState(null)
   const [valid, setValid] = useState(true)
   let isValid = false
+  var flag = true 
   useEffect(() => {
     (async () => {
       const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -60,8 +61,10 @@ const SignUpDriver = ({ route, navigation }) => {
       }
 
     }).then((res) => {
+      flag = true 
       console.log(res.status)
     }).catch((err) => {
+      flag = false
       console.log(err)
     })
 
@@ -82,11 +85,12 @@ const SignUpDriver = ({ route, navigation }) => {
       email: route.params.email,
       mobileNumber: route.params.mobileNumber,
       role:"driver"
-    }).then((res) => {
+    }).then(async (res) => {
       if (res.status !== 201) {
         console.log(res.data)
         console.log(res.status)
       } else {
+        console.log(res.data)
         console.log('user added')
         onLoggedIn(res.data.token);
         const token = res.data.token
@@ -97,6 +101,10 @@ const SignUpDriver = ({ route, navigation }) => {
         uploadImage('driverLicense', token)
         uploadImage('carLicense', token)
         uploadImage('carInsurance', token)
+        if(flag == true) {
+          await SecureStore.setItemAsync('role', 'driver')
+          navigation.navigate('Home')
+        }
       }
     }).catch((err) => {
       console.log(err)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect , useState} from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import PublishSource from '../Publish-Source/publish-source'
 import PublishDestination from '../Publish-Deastination/publish-destination'
@@ -8,12 +8,24 @@ import PublishDateDetails from '../PublishDateDetails/publish-date-details'
 import PublishProperties from '../PuclishProperties/publish-properties'
 import PublishNumber from '../Publish-Number/publish-number'
 import UnauthorizedDriver from '../Unauthorized/unauthorized-driver'
+import * as SecureStore from 'expo-secure-store' 
 
-const PublishScreenMain = (role = 'driver') => {
+const PublishScreenMain =  () => {
     const Stack = createNativeStackNavigator()
+    const [role, setRole] = useState('')
+    useEffect(() => {
+        async  function fetchRole (){
+        const userString = await SecureStore.getItemAsync('user')
+        const user = JSON.parse(userString)
+        console.log('role1: ' + user.role)
+        setRole(user.role)
+        }
+        fetchRole()
+    }, [])
 
+    console.log('role2: ' + role)
     return (
-        //role === 'driver' ?
+         role === 'driver' ?
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen
                     name='Publish-Source'
@@ -44,12 +56,12 @@ const PublishScreenMain = (role = 'driver') => {
                     component={PublishNumber}
                 />
             </Stack.Navigator>
-            // : <Stack.Navigator screenOptions={{ headerShown: false }}>
-            //     <Stack.Screen
-            //         name = 'Unauthorized-Driver'
-            //         component={UnauthorizedDriver}
-            //     />
-            // </Stack.Navigator>
+            : <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen
+                    name = 'Unauthorized-Driver'
+                    component={UnauthorizedDriver}
+                />
+            </Stack.Navigator>
     )
 }
 

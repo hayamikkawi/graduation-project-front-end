@@ -5,7 +5,6 @@ import Logo from '../../../assets/favicon.png'
 import Transport from '../../../assets/transport.png'
 import CustomButton from '../../components/CustomButton'
 import CustomInput from '../../components/CustomInput'
-// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as SecureStore from 'expo-secure-store'
 import ErrorMessage from '../../components/ErrorMessage/error-message'
 import Ionicon from 'react-native-vector-icons/Ionicons'
@@ -33,14 +32,14 @@ const SignInScreen = ({ navigation }) => {
         }
     }
     const onLoggedIn = async (token) => {
-        console.log("Received Token:" + token)
+       // console.log("Received Token:" + token)
         await SecureStore.setItemAsync('secureToken', token);
         const storedToken = await SecureStore.getItemAsync('secureToken')
-        console.log('Stored Token: ' + storedToken)
+       // console.log('Stored Token: ' + storedToken)
     }
     const onLoginPressed = () => {
         validate()
-        console.log(`${API_URL}/users/login`)
+        //console.log(`${API_URL}/users/login`)
         if (!isValidated) {
             setError('Please Fill all Fields!')
             return
@@ -49,7 +48,15 @@ const SignInScreen = ({ navigation }) => {
             username,
             password
         };
+        // axios.post(`${API_URL}/users/login`, payload, {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        // }).then((req) => {
 
+        // }).catch((err) => {
+
+        // })
         fetch(`${API_URL}/users/login`, {
             method: 'POST',
             headers: {
@@ -59,14 +66,17 @@ const SignInScreen = ({ navigation }) => {
         })
             .then(async res => {
                 try {
-                    const jsonRes = await res.json();
+                    
                     if (res.status != 200) {
                         setIsError(true);
                         setError("Incorrect username or password");
                     } else {
+                        const jsonRes = await res.json();
                         onLoggedIn(jsonRes.token);
                         setIsError(false);
                         setError(jsonRes.message);
+                        const user = jsonRes.user
+                        await SecureStore.setItemAsync('user', JSON.stringify(user) )
                         navigation.navigate('Home')
                     }
 

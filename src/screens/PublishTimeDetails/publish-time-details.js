@@ -12,19 +12,21 @@ const PublishTimeDetails = ({ navigation, route }) => {
     const [selectedHours, setSelectedHours] = useState(8);
     const [selectedMinutes, setSelectedMinutes] = useState(0);
     const [amPm, setAmPm] = useState('am')
+    const [timeVal, setTimeVal] = useState('')
     const onPress = () => {
-        console.log(`${selectedHours}:${selectedMinutes} ${amPm}`)
+       // console.log(`${selectedHours}:${selectedMinutes} ${amPm}`)
         navigation.navigate('Publish-Properties', {
             sourceDescription: route.params.sourceDescription,
             sourceId: route.params.sourceId,
             destDescription: route.params.destDescription,
             destId: route.params.destId,
             date: route.params.date,
-            time: `${selectedHours.toLocaleString('en-US', {
+            time: amPm.toLowerCase() == 'pm'? `${(selectedHours + 12).toLocaleString('en-GB', {
                 minimumIntegerDigits: 2,
-                })}:${selectedMinutes.toLocaleString('en-US', {
+                })}:${selectedMinutes.toLocaleString('en-GB', {
                 minimumIntegerDigits: 2
-            })}${amPm}`
+            })}` : `${selectedHours.toLocaleString('en-GB',{ minimumIntegerDigits : 2})}:${selectedMinutes.toLocaleString('en-GB', {minimumIntegerDigits: 2})}`
+            // ${amPm}`
         })
     }
     return (

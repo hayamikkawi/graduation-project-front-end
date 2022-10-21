@@ -22,7 +22,7 @@ const PublishNumber = ({ navigation, route }) => {
             destination: route.params.destDescription,
             destinationId: route.params.destId,
             date: route.params.date,
-            //time: route.params.time,
+            time: route.params.time,
             middleSeatEmpty: route.params.onlyTwo,
             numberOfPassengers: number,
             bookingInstantly: instant,
