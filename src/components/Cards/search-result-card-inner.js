@@ -9,12 +9,17 @@ import Disabled from '../../../assets/myIcons/disabled.png'
 import NoAnimal from '../../../assets/myIcons/no-pets.png'
 import NoChildren from '../../../assets/myIcons/children.png'
 import AC from '../../../assets/myIcons/air-conditioner.png'
-//temp 
-import DriverPic from '../../../assets/user/F38.jpg'
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
-
+import { Buffer } from "buffer";
 
 const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navigation }) => {
+    var imageURL = ''
+    try {
+        const b = new Buffer.from(ride.user.profilePicture, 'binary').toString('base64')
+        imageURL = 'data:image/jpeg;base64,'+b 
+    } catch(err){
+        console.log(err)
+    }
     const icons = {
         'noSmoking': NoSmoke, 'girlsOnly': Female,
         'seatForDisabled': Disabled, 'noPets': NoAnimal, 'noChildren': NoChildren,
@@ -40,7 +45,8 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
                         navigation.navigate('SearchMap',
                             {
                                 latitude: ride.sourceLatitude,
-                                longitude: ride.sourceLongitude
+                                longitude: ride.sourceLongitude,
+                                name: ride.source
                             })
                     }}>
                         <Text style={styles.text}>From:</Text>
@@ -53,7 +59,8 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
                         navigation.navigate('SearchMap',
                             {
                                 latitude: ride.destinationLatitude,
-                                longitude: ride.destinationLongitude
+                                longitude: ride.destinationLongitude, 
+                                name: ride.destination
                             })
                     }}>
                         <Text style={styles.text}> To:   </Text>
@@ -70,15 +77,18 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
             </View>
             {withDriver &&
                 <View style={styles.container}>
-                    <ProfilePic source={DriverPic} radius={60} />
-                    <Text style={styles.text}>{ride.driver.name}</Text>
+                    {
+                        ride.user && <ProfilePic source={{uri: imageURL}} radius={60} />
+                    }
+                    <Text style={styles.text}>{ride.user && ride.user.username}</Text>
                 </View>
             }
             {nextIcon &&
                 <View style={styles.bottomContainer}>
                     <View style={styles.iconsContainer}>
-                        {ride.properties.map((property) => {
-                            return <Image source={icons[property]} style={styles.icon} resizeMode="contain" key={icons[property]} />
+                        {Object.keys(icons).map((property) => {
+                            if (ride.rideProperty && ride.rideProperty[property])
+                                return <Image source={icons[property]} style={styles.icon} resizeMode="contain" key={icons[property]} />
                         })}
                     </View>
                     <View>

@@ -12,7 +12,6 @@ const SearchScreenMain = () => {
   const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator
-      headerTintColor = 'red'
       screenOptions={
         {
           title : '',

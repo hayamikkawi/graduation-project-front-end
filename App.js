@@ -8,20 +8,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/HomeScreen/home-screen.js';
 import SignUpDriver from './src/screens/SignUpDriverScreen/sign-up-driver.js';
-import SearchScreenMap from './src/screens/SearchScreen2/search-screen2.js';
-import axios from 'axios';
-import API_URL from './src/App_URL.js';
 import *   as SecureStore from 'expo-secure-store'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useReducer } from 'react'
 
 export default function App() {
   const [isSigned, setIsSigned] = useState(false)
+
   useEffect(() => {
-    async function isLoggedIn(){
-      //console.warn('heyyy')
-      //await SecureStore.setItemAsync('secureToken', '')
+    async function isLoggedIn() {
       const storedToken = await SecureStore.getItemAsync('secureToken')
-      console.warn(storedToken)
       if (!storedToken || storedToken.length == 0) {
         setIsSigned(false)
       }
@@ -31,10 +26,9 @@ export default function App() {
       }
     }
     isLoggedIn()
-    return () => {
-      
-    };
   }, [])
+
+
   let [fontsLoaded] = useFonts({
     'kanyon-bold': require('./assets/fonts/Fontspring-DEMO-kanyon-bold.otf'),
     'kanyon-normal': require('./assets/fonts/Fontspring-DEMO-kanyon-regular.otf'),
@@ -46,114 +40,57 @@ export default function App() {
   }
   // var isSigned = false
   const Stack = createNativeStackNavigator()
-  var role = ''
 
-  //console.log("is logged in:" +  isLoggedIn())
   return (
     !isSigned ?
-
       <NavigationContainer >
-        <Stack.Navigator screenOptions={{
-        headerShown: false
-      }}>
+        <Stack.Navigator
+        screenOptions={{
+          headerShown: false
+        }}
+          // screenOptions={{
+          //   title: '',
+          //   headerTintColor: 'white',
+          //   headerStyle: {
+          //     backgroundColor: '#262a2d'
+          //   }
+          // }}
+        >
           <Stack.Screen
             name="Pre"
             component={FirstScreen}
-            options={{
-              title: '', headerStyle: {
-                backgroundColor: '#262a2d',
-              },
-              headerTintColor: '#fff',
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }}
           />
           <Stack.Screen
             name="Log in"
             component={SignInScreen}
-            options={{
-              title: '', headerStyle: {
-                backgroundColor: '#262a2d',
-              },
-              headerTintColor: '#fff',
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }} />
+          />
           <Stack.Screen
             name="Sign Up"
             component={SignUpScreen}
-            options={
-              {
-                title: '', headerStyle: {
-                  backgroundColor: '#262a2d'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                }
-              }
-            }
           />
           <Stack.Screen
             name="Sign Up Driver"
             component={SignUpDriver}
-            options={
-              {
-                title: '', headerStyle: {
-                  backgroundColor: '#262a2d'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                }
-              }
-            }
           />
           <Stack.Screen
             name="Home"
             component={HomeScreen}
-            options={
-              {
-                title: '', headerStyle: {
-                  backgroundColor: '#262a2d'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                }
-              }
-            }
           />
-
         </Stack.Navigator>
       </NavigationContainer>
       : <NavigationContainer>
-        <Stack.Navigator screenOptions={{
-          headerShown: false
-        }}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false
+          }}
+        >
           <Stack.Screen
             name="Home"
             component={HomeScreen}
-            options={
-              {
-                title: '', headerStyle: {
-                  backgroundColor: '#262a2d'
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                }
-              }
-            }
+           // initialParams={{ setIsSigned: setIsSigned }}
           />
         </Stack.Navigator>
       </NavigationContainer>
-
-
-
-
   );
 }
 

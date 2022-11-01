@@ -4,7 +4,13 @@ import CustomHeader from '../../components/Header/header'
 import CustomButton from '../../components/CustomButton'
 import Unauthorized from '../../../assets/myIcons/401.png'
 
-const UnauthorizedDriver = () => {
+const UnauthorizedDriver = ({ navigation }) => {
+    const onBecomeDriverPressed = () => {
+        console.log('hey')
+        navigation.navigate('Profile-ChangeRole', {
+            roleChange: true
+        })
+    }
     return (
         <ScrollView style={styles.root}>
             <View style={styles.upcontainer}>
@@ -18,11 +24,11 @@ const UnauthorizedDriver = () => {
                 />
             </View>
             <View style={styles.container}>
-
                 <CustomButton
                     text={'Become a driver'}
                     width={'60%'}
                     style={styles.btn}
+                    onPress={onBecomeDriverPressed}
                 />
             </View>
 
@@ -35,35 +41,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#262a2d',
         width: '100%',
         height: '100%',
-        // padding:'25%'
     },
     container: {
         width: '90%',
-        //height: '50%',
         marginHorizontal: '5%',
-        //marginVertical: '5%',
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'space-around',
-        // borderWidth: 1, 
-        // borderColor: 'blue', 
-
     },
     image: {
         width: '100%',
-        height: '200%', 
-        marginTop:'-50%', 
-        // borderWidth: 2, 
-        // borderColor: 'red'
-       // height: '250%',
-
-    },
-    upcontainer:{
-        width: '90%', 
         height: '200%',
-        // borderColor:'yellow', 
-        // borderWidth: 1, 
-        marginVertical: '15%', 
+        marginTop: '-50%',
+    },
+    upcontainer: {
+        width: '90%',
+        height: '200%',
+        marginVertical: '15%',
         marginHorizontal: '5%'
     }
 })

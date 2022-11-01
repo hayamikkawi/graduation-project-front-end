@@ -1,61 +1,85 @@
 import { View, Text, StyleSheet, Pressable, Image, ScrollView } from 'react-native'
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomHeader from '../../components/Header/header'
-import DriverPic from '../../../assets/user/F38.jpg'
 import ProfilePic from '../../components/ProfilePicture/profile-pic'
-//icons 
-import CarSeat from '../../../assets/myIcons/car-chair.png'
-import NoSmoke from '../../../assets/myIcons/no-smoke.png'
-import Female from '../../../assets/myIcons/female.png'
-import Disabled from '../../../assets/myIcons/disabled.png'
-import NoAnimal from '../../../assets/myIcons/no-pets.png'
-import NoChildren from '../../../assets/myIcons/children.png'
-import AC from '../../../assets/myIcons/air-conditioner.png'
-import SearchResultCardInner from '../../components/SearchResultCard/search-result-card-inner';
+import SearchResultCardInner from '../../components/Cards/search-result-card-inner';
 import CustomButton from '../../components/CustomButton';
-import CustomText from '../../components/CustomText/custom-text';
-import CustomButtonForm from '../../components/CustomButtonForm/custom-button-form';
 import axios from 'axios';
 import API_URL from '../../App_URL';
 import * as SecureStore from 'expo-secure-store'
+import SucceedModal from '../../components/Modals/succeed-modal';
+import { Buffer } from "buffer";
 
-const SearchResultExpanded = ({route, navigation }) => {
+const SearchResultExpanded = ({ route, navigation }) => {
     const [ride, setRide] = useState(route.params.ride)
-    const [numberOfSeats, setNumberOfSeats] = useState(route.params.ride.availableSeats)
+    const [numberOfSeats, setNumberOfSeats] = useState(ride.rideProperty.numberOfAvailableSeats)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalFailVisible, setModalFailVisible] = useState(false);
+    const [buttonDisabled, setButtonDisabled] = useState(false)
     const passengers = ride.passengers
-    const onReservePressed = async () =>{
+    var imageURL = ''
+    const b = new Buffer.from(ride.user.profilePicture, 'binary').toString('base64')
+    imageURL = 'data:image/jpeg;base64,' + b
+    const properties_names = {
+        'middleSeatEmpty': 'Only two passengers in the back seat',
+        'noSmoking': 'Smoking not allowed', 'girlsOnly': 'Girls only', 'disabled': 'Disabled seat available',
+        'noPets': 'Pets not allowed', 'noChildren': 'Children not allowed', 'AC': 'Air Conditioner'
+    }
+    console.log(ride)
+
+    const onReservePressed = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
         console.log('reserve')
-        axios.post(`${API_URL}/rides/reserve`, {
-            id: ride.id
+        axios.post(`${API_URL}/ride/reserve`, {
+            rideId: ride.rideProperty.rideId
         }, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
-          }).then((res)=>{
-            if(res.status == 200){
+        }).then((res) => {
+            console.log('result' + res.data)
+            if (res.status == 200) {
+                setNumberOfSeats(numberOfSeats - 1)
+                setModalVisible(true)
 
-            } else if (res.status == 400){
+            } else if (res.status == 400) {
 
+            } else if (res.status == 403) {
+                
             }
-          }).catch((err)=>{
-            console.log(err)
-          })
+        }).catch((err) => {
+            setModalFailVisible(true)
+        })
     }
-    console.log(ride.availableSeats)
     return (
         <ScrollView style={styles.root}>
+            <SucceedModal modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                onPress={() => {
+                    setModalVisible(false)
+                    setButtonDisabled(true)
+                }}
+                message={!ride.rideProperty.bookingInstantly ? 'Your Reservation Request Has Been Sent' : 'Reserved Successfully'}
+            />
+            <SucceedModal modalVisible={modalFailVisible}
+                setModalVisible={setModalFailVisible}
+                onPress={() => {
+                    setModalFailVisible(false)
+                    setButtonDisabled(true)
+                }}
+                message={'Your already reserved in this ride'}
+            />
             <View style={styles.container}>
                 <View style={styles.view}>
                     <CustomHeader text={'Ride info'} size={25} />
-                    <SearchResultCardInner ride={ride} nextIcon={false} withDriver={false} navigation={navigation}/>
+                    <SearchResultCardInner ride={ride} nextIcon={false} withDriver={false} navigation={navigation} />
                 </View>
                 <View style={styles.view}>
                     <CustomHeader text={'Driver info'} size={25} />
                     <View style={styles.driverContainer}>
-                        <ProfilePic source={DriverPic} radius={60} />
-                        <Text style={styles.text}>{ride.driver.name}</Text>
+                        <ProfilePic source={{ uri: imageURL }} radius={60} />
+                        <Text style={styles.text}>{ride.user && ride.user.username}</Text>
                         <CustomButton text={'Visit'} width={'30%'} />
                     </View>
                 </View>
@@ -63,7 +87,7 @@ const SearchResultExpanded = ({route, navigation }) => {
                     <CustomHeader text={'Passengers'} size={25} />
                     {passengers.map((pass) => {
                         return (
-                            <Pressable style={styles.driverContainer} key={pass.name}>
+                            <Pressable style={styles.driverContainer} key={pass.userId}>
                                 {/* <ProfilePic source={DriverPic} radius={60} /> */}
                                 <Text style={styles.text}>{pass.name}</Text>
                                 <Ionicons name='caret-forward' color={'#1093c9'} size={25} />
@@ -74,10 +98,11 @@ const SearchResultExpanded = ({route, navigation }) => {
                 <View style={styles.view}>
                     <CustomHeader text={'Properties'} size={25} />
                     {
-                        ride.properties.map((property) => {
-                            return (<View style={styles.propContainer} key={property}>
-                                <Text style={styles.text}>{property}</Text>
-                            </View>)
+                        Object.keys(ride.rideProperty).map((property) => {
+                            if (ride.rideProperty && ride.rideProperty[property] === true && property != 'bookingInstantly')
+                                return (<View style={styles.propContainer} key={property}>
+                                    <Text style={styles.text}>{properties_names[property]}</Text>
+                                </View>)
                         })
                     }
                 </View>
@@ -89,17 +114,17 @@ const SearchResultExpanded = ({route, navigation }) => {
 
                 </View>
                 <View >
-                    <View style={[styles.driverContainer, {margin: '5%'}]}>
+                    <View style={[styles.driverContainer, { margin: '5%' }]}>
                         <Text style={styles.text}>Allows instance reservation</Text>
                         {
-                            ride.allowInstanceReservation ? <Ionicons name= 'checkmark-circle' color={'#80B362'} size={25} /> :
-                             <Ionicons  name= 'close-circle' color={'#FF7276'} size={25}/>
+                            ride.rideProperty.bookingInstantly ? <Ionicons name='checkmark-circle' color={'#80B362'} size={25} /> :
+                                <Ionicons name='close-circle' color={'#FF7276'} size={25} />
                         }
                     </View>
 
                 </View>
                 <View>
-                    <CustomButton text={'Reserve Now'}  onPress={onReservePressed}/>
+                    <CustomButton text={'Reserve Now'} onPress={onReservePressed} disabled={buttonDisabled} />
                 </View>
             </View>
         </ScrollView>
@@ -139,7 +164,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '3%', 
+        padding: '3%',
         marginVertical: '2%'
 
     },

@@ -68,7 +68,7 @@ const PublishNumber = ({ navigation, route }) => {
                 }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>You Ride Was Published Successfully</Text>
+                        <Text style={styles.modalText}>Your Ride Was Published Successfully</Text>
                         <View style={styles.modalButtons}>
                            <CustomButton 
                            style={styles.button} 

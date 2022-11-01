@@ -8,12 +8,13 @@ const MapViewScreen = ({navigation, route}) => {
     latitude: route.params.latitude, 
     longitude: route.params.longitude
   }
+  const name = route.params.name
   return (
     <View style={styles.container}>
       <MapView style={styles.map}>
         <Marker
           coordinate={latlng}
-          title={'test'}
+          title={name}
           //description={marker.description}
         />
       </MapView>

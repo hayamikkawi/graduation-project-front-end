@@ -7,6 +7,7 @@ import ErrorMessage from '../../components/ErrorMessage/error-message';
 import CustomButtonForm from '../../components/CustomButtonForm/custom-button-form';
 import CustomButton from '../../components/CustomButton/custom-button';
 import * as SecureStore from 'expo-secure-store'
+import SucceedModal from '../../components/Modals/succeed-modal';
 
 const API_URL = require('../../App_URL')
 const SignUpDriver = ({ route, navigation }) => {
@@ -15,8 +16,12 @@ const SignUpDriver = ({ route, navigation }) => {
   const [carInsurance, setCarInsurance] = useState(null)
   const [hasPermession, setHasPermession] = useState(null)
   const [valid, setValid] = useState(true)
+  const [success, setSuccess] = useState(false)
+
+  const { roleChange } = route.params
+
   let isValid = false
-  var flag = true 
+  var flag = true
   useEffect(() => {
     (async () => {
       const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -61,7 +66,7 @@ const SignUpDriver = ({ route, navigation }) => {
       }
 
     }).then((res) => {
-      flag = true 
+      flag = true
       console.log(res.status)
     }).catch((err) => {
       flag = false
@@ -74,9 +79,6 @@ const SignUpDriver = ({ route, navigation }) => {
     const storedToken = await SecureStore.getItemAsync('secureToken')
   }
   const onSignupPressed = () => {
-    //1- validate (the second page (nth is empty))
-    //2- Send Sign Up data 
-    //3- Upload the files (3)
     validate()
     if (!isValid) return
     axios.post(`${API_URL}/users/signup`, {
@@ -84,7 +86,7 @@ const SignUpDriver = ({ route, navigation }) => {
       password: route.params.password,
       email: route.params.email,
       mobileNumber: route.params.mobileNumber,
-      role:"driver"
+      role: "driver"
     }).then(async (res) => {
       if (res.status !== 201) {
         console.log(res.data)
@@ -94,15 +96,11 @@ const SignUpDriver = ({ route, navigation }) => {
         console.log('user added')
         onLoggedIn(res.data.token);
         const token = res.data.token
-        console.log("token:" + token)
-        //setIsError(false);
-        //setError(jsonRes.message);
-        //navigation.navigate('Home')
         uploadImage('driverLicense', token)
         uploadImage('carLicense', token)
         uploadImage('carInsurance', token)
-        if(flag == true) {
-          await SecureStore.setItemAsync('role', 'driver')
+        if (flag == true) {
+          await SecureStore.setItemAsync('user', JSON.stringify(user))
           navigation.navigate('Home')
         }
       }
@@ -110,16 +108,27 @@ const SignUpDriver = ({ route, navigation }) => {
       console.log(err)
     })
   }
+  const onBecomeDriverPressed = async () => {
+    validate()
+    if (!isValid) return
+    const token = await SecureStore.getItemAsync('secureToken')
+    uploadImage('driverLicense', token)
+    uploadImage('carLicense', token)
+    uploadImage('carInsurance', token)
+    if (flag == true) {
+      setSuccess(true)
+    } else {
+      setSuccess(false)
+    }
+
+  }
   const selectFile = async (file) => {
     try {
-      console.log('hey')
       const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        //aspect: [4, 3], 
         quality: 1
       });
-      //console.log('res : ' + res.file);
       if (file == 'driverLicense') {
         setDriverLicense(res);
       } else if (file == 'carLicense') {
@@ -151,8 +160,18 @@ const SignUpDriver = ({ route, navigation }) => {
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}>
       <ScrollView style={styles.root}>
+        <SucceedModal
+          modalVisible={success}
+          setModalVisible={setSuccess}
+          message = 'You became a driver'
+          onPress={()=>{
+            setSuccess(false)
+          }}
+        />
         <View style={styles.customContainer}>
-          <Text style={styles.title}>Sign Up</Text>
+          {roleChange ?
+            <Text style={[styles.title, { fontSize: 22 }]}>Become A Driver</Text> :
+            <Text style={styles.title}>Sign Up</Text>}
         </View>
         <View style={styles.container}>
           <CustomText text={"Driving \n License"} borderRight={true} style={styles.text} />
@@ -184,7 +203,9 @@ const SignUpDriver = ({ route, navigation }) => {
           <CustomButtonForm onPress={() => { selectFile('carInsurance') }} text={'Pick a File'} />
         </View>
         {valid ? '' : <ErrorMessage message={'Please Fill All Fields.'} />}
-        <CustomButton text={'Sign Up'} onPress={onSignupPressed} />
+        {roleChange ?
+          <CustomButton text={'Become A Driver'} onPress={onBecomeDriverPressed} /> :
+          <CustomButton text={'Sign Up'} onPress={onSignupPressed} />}
       </ScrollView>
     </KeyboardAvoidingView>
   )

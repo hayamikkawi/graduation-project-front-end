@@ -68,7 +68,7 @@ const SignUpScreen = ({navigation}) => {
 
         let token = jsonRes
         await SecureStore.setItemAsync('secureToken', token);
-        
+        console.log(user)
         await SecureStore.setItemAsync('user',  JSON.stringify(user))
         navigation.navigate("Home")
       }).catch((err) =>{

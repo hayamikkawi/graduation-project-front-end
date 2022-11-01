@@ -32,14 +32,11 @@ const SignInScreen = ({ navigation }) => {
         }
     }
     const onLoggedIn = async (token) => {
-       // console.log("Received Token:" + token)
         await SecureStore.setItemAsync('secureToken', token);
         const storedToken = await SecureStore.getItemAsync('secureToken')
-       // console.log('Stored Token: ' + storedToken)
     }
     const onLoginPressed = () => {
         validate()
-        //console.log(`${API_URL}/users/login`)
         if (!isValidated) {
             setError('Please Fill all Fields!')
             return
@@ -48,15 +45,6 @@ const SignInScreen = ({ navigation }) => {
             username,
             password
         };
-        // axios.post(`${API_URL}/users/login`, payload, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        // }).then((req) => {
-
-        // }).catch((err) => {
-
-        // })
         fetch(`${API_URL}/users/login`, {
             method: 'POST',
             headers: {
@@ -66,7 +54,6 @@ const SignInScreen = ({ navigation }) => {
         })
             .then(async res => {
                 try {
-                    
                     if (res.status != 200) {
                         setIsError(true);
                         setError("Incorrect username or password");
@@ -81,12 +68,12 @@ const SignInScreen = ({ navigation }) => {
                     }
 
                 } catch (err) {
-                    console.log(err);
+                    console.log(JSON.stringify(err));
                 };
             })
             .catch(err => {
                 console.log('err')
-                console.log(err);
+                console.log(JSON.stringify(err));
             });
     }
     const onForgotPasswordPressed = () => {
@@ -148,6 +135,7 @@ const styles = StyleSheet.create(
         },
         root: {
             alignItems: 'center',
+            marginTop: '10%'
         },
         inputContainer: {
             flexDirection: 'row'
@@ -159,9 +147,7 @@ const styles = StyleSheet.create(
         },
         image: {
             width: '110%',
-            //maxWidth: 2000,
             maxHeight: 700,
-            // marginLeft: -20
         },
         loginContainer: {
             width: '80%',

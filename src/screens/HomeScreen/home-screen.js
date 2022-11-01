@@ -7,9 +7,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchPage from '../SearchScreen/search-page';
 import SearchScreenMain from '../SearchScreenMain/search-screen-main';
 import PublishScreenMain from '../PublishScreenMain/publish-screen-main';
+import ProfileScreenMain from '../ProfileScreen/profile-screen-main';
 
 const Tab = createBottomTabNavigator();
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   return (
     //<NavigationContainer>
     <Tab.Navigator
@@ -21,6 +22,8 @@ const HomeScreen = ({ navigation }) => {
             iconName = "search-outline"
           } else if (route.name === 'Publish') {
             iconName = "add-circle-outline"
+          } else if(route.name === 'Profile'){
+            iconName = "person"
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -38,6 +41,11 @@ const HomeScreen = ({ navigation }) => {
       <Tab.Screen
         name="Publish"
         component={PublishScreenMain}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreenMain}
+      //  initialParams={{ setIsSigned: route.params.setIsSigned }}
       />
     </Tab.Navigator>
     // </NavigationContainer>

@@ -8,6 +8,7 @@ import { useState } from 'react'
 import axios from 'axios';
 import API_URL from '../../App_URL';
 import * as SecureStore from 'expo-secure-store'
+import ErrorMessage from '../../components/ErrorMessage/error-message'
 
 const SearchPage = ({ navigation }) => {
     const { height } = useWindowDimensions()
@@ -17,6 +18,9 @@ const SearchPage = ({ navigation }) => {
     const [destinationId, setDestinationId] = useState('')
     const [numberOfPassengers, setNumberOfPassengers] = useState(0)
     const [date, setDate] = useState(new Date())
+    const [isError, setIsError] = useState(false)
+    var error = false
+
     const changeDest = (dest, destId) => {
         setDestination(dest)
         setDestinationId(destId)
@@ -32,129 +36,49 @@ const SearchPage = ({ navigation }) => {
             setNumberOfPassengers(newVal)
         }
     }
-    const setDateVal = (newDate) => {
+    const setDateVal = (event, newDate) => {
         setDate(newDate)
     }
+    const validate = () => {
+        if (source.trim() == '' || destination.trim() == '' || numberOfPassengers == 0) {
+            setIsError(true)
+            console.log('error')
+            error = true
+        } else{
+            setIsError(false)
+        }
+    }
     const onSearchClicked = async () => {
-        const token = await SecureStore.getItemAsync('secureToken')
-        axios.post(`${API_URL}/rides/search`, {
-            sourceId,
-            destinationId,
-            numberOfPassengers,
-            date
-        }, {
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        }).then((res) => {
-            const dummyData = [{
-                id: 1,
-                source: 'Nablus - 5',
-                sourceLatitude: 32.2227, 
-                sourceLongitude: 35.2621, 
-                distancefromSource: 5.0,
-                destination: 'Ramallah -1',
-                destinationLatitude: 31.9038, 
-                destinationLongitude: 35.2034, 
-                distanceFromDestination: 1.0,
-                time: '08:00',
-                driver: {
-                    id: 1,
-                    name: 'jana mikkawi', 
-                   // profilePicture: driverPP
-                },
-                passengers: [{ name: 'Haya Mikkawi' }, { name: 'Aya Mikkawi' }]
-                ,
-                properties: ['girlsOnly', 'noSmoking', 'seatForDisabled'],
-                availableSeats: 5,
-                allowInstanceReservation: true
+        validate()
+        if (error) return
+        else {
+            const token = await SecureStore.getItemAsync('secureToken')
+            axios.post(`${API_URL}/ride/search`, {
+                sourceId,
+                destinationId,
+                numberOfPassengers,
+                date: date
             }, {
-                id: 2,
-                source: 'Nablus - 3',
-                sourceLatitude: 32.2227, 
-                sourceLongitude: 35.2621,
-                distancefromSource: 3.0,  
-                destination: 'Ramallah - 4',
-                destinationLatitude: 31.9038, 
-                destinationLongitude: 35.2034,
-                distanceFromDestination: 4.0, 
-                time: '13:00',
-                driver: {
-                    name: 'jana'
-                },
-                passengers: [],
-                properties: ['noPets', 'noChildren', 'AC'],
-                availableSeats: 5,
-                allowInstanceReservation: false
-            }, 
-            {
-                id: 3,
-                source: ' جامعة النجاح الوطنية الحرم القديم في نابلس',
-                sourceLatitude: 32.2227, 
-                sourceLongitude: 35.2621,
-                distancefromSource: 0.5,  
-                destination: 'Ramallah-far - 11',
-                destinationLatitude: 31.9038, 
-                destinationLongitude: 35.2034,
-                distanceFromDestination: 11.2, 
-                time: '17:30',
-                driver: {
-                    name: 'jana'
-                },
-                passengers: [],
-                properties: ['girlsOnly', 'noPets', 'middleSeatEmpty'],
-                availableSeats: 5,
-                allowInstanceReservation: false
-            }, {
-                id: 4,
-                source: 'Nablus - 14',
-                sourceLatitude: 32.2227, 
-                sourceLongitude: 35.2621,
-                distancefromSource: 14.0,  
-                destination: 'Ramallah - 0',
-                destinationLatitude: 31.9038, 
-                destinationLongitude: 35.2034,
-                distanceFromDestination: 0.7, 
-                time: '10:00',
-                driver: {
-                    name: 'jana'
-                },
-                passengers: [],
-                properties: ['noPets', 'noChildren', 'AC'],
-                availableSeats: 5,
-                allowInstanceReservation: false
-            }, {
-                id: 5,
-                source: 'Nablus - 3.5',
-                sourceLatitude: 32.2227, 
-                sourceLongitude: 35.2621,
-                distancefromSource: 3.5,  
-                destination: 'Ramallah - 19',
-                destinationLatitude: 31.9038, 
-                destinationLongitude: 35.2034,
-                distanceFromDestination : 19.1, 
-                time: '07:30',
-                driver: {
-                    name: 'jana'
-                },
-                passengers: [],
-                properties: ['girlsOnly', 'noPets', 'noChildren', 'AC'],
-                availableSeats: 5,
-                allowInstanceReservation: false
-            }
-            ]
-            navigation.navigate('SearchResult', dummyData)
-            if (res.status == 400) {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }).then((res) => {
+                if (res.status == 400) {
 
-            } else if (res.status == 404) {
+                } else if (res.status == 404) {
+                    const data = []
+                    navigation.navigate('SearchResult', data)
+                } else if (res.status == 200) {
+                    const data = res.data
+                    data.pop()
+                    console.log(data)
+                    navigation.navigate('SearchResult', data)
+                }
 
-            } else if (res.status == 200) {
-                //const realResults = res.data
-            }
-
-        }).catch((err) => {
-            console.log(err)
-        })
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
     }
     return (
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -210,7 +134,7 @@ const SearchPage = ({ navigation }) => {
                                     value={date}
                                     accentColor='#1093c9'
                                     minimumDate={new Date()}
-                                    onChange={() => { setDateVal }}
+                                    onChange={setDateVal}
                                 />
                             </View>
                         </View>
@@ -222,6 +146,7 @@ const SearchPage = ({ navigation }) => {
                 >
                     <Text style={{ color: 'white', fontFamily: 'kanyon-bold', fontSize: 17 }}>Search</Text>
                 </Pressable>
+                {isError? <ErrorMessage message={'Please fill all fields.'} />: null}
             </ScrollView>
         </KeyboardAvoidingView>
     )
@@ -274,7 +199,7 @@ const styles = StyleSheet.create({
         padding: '5%',
         width: '80%',
         marginLeft: '10%',
-        marginBottom: '10%',
+        //marginBottom: '10%',
         flexDirection: 'row',
         justifyContent: 'space-around',
         borderBottomLeftRadius: '20%',

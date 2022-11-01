@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView } from 'react-native'
 import React, { useState } from 'react'
-import SearchResultCard from '../../components/SearchResultCard/search-result-card'
+import SearchResultCard from '../../components/Cards/search-result-card'
 import CustomHeader from '../../components/Header/header'
 import CustomButton from '../../components/CustomButton'
 import NoResults from '../../components/NoResultsFound/no-results'
@@ -25,7 +25,7 @@ const SearchResult = ({ navigation, route }) => {
       {searchResult.length == 0 && <NoResults text={'No results found'}/>}
       {
         searchResult.map((ride) => {
-          return <SearchResultCard ride={ride} key={ride.id} navigation={navigation} />
+          return <SearchResultCard ride={ride} key={ride.rideProperty.rideId} navigation={navigation} />
         })
       }
     </ScrollView>

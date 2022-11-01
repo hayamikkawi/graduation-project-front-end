@@ -2,7 +2,6 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import React from 'react'
 import CustomHeader from '../../components/Header/header'
 import Ionicon from 'react-native-vector-icons/Ionicons'
-import { RadioButton } from 'react-native-paper'
 import { useState } from 'react'
 import Checkbox from 'expo-checkbox'
 import CustomButton from '../../components/CustomButton'
@@ -63,17 +62,22 @@ const Filtration = ({ navigation, route }) => {
         const { rides } = route.params
         console.log(rides)
         var newRides = rides.filter((ride) => {
-            return (
-                (
-                    (!onlyTwo || (onlyTwo && ride.properties.includes('middleSeatEmpty'))) &&
-                    (!noSmoke || (noSmoke && ride.properties.includes('noSmoking'))) &&
-                    (!girlsOnly || (girlsOnly && ride.properties.includes('girlsOnly'))) &&
-                    (!disabled || (disabled && ride.properties.includes('seatForDisabled'))) &&
-                    (!noPets || (noPets && ride.properties.includes('noPets'))) &&
-                    (!noChildren || (noChildren && ride.properties.includes('noChildren'))) &&
-                    (!ac || (ac && ride.properties.includes('AC')))
+            if (ride.rideProperty) {
+                const properties = Object.keys(ride.rideProperty).filter((property)=>{
+                    return ride.rideProperty[property]
+                })
+                return (
+                    (
+                        (!onlyTwo || (onlyTwo && properties.includes('middleSeatEmpty'))) &&
+                        (!noSmoke || (noSmoke && properties.includes('noSmoking'))) &&
+                        (!girlsOnly || (girlsOnly && properties.includes('girlsOnly'))) &&
+                        (!disabled || (disabled && properties.includes('seatForDisabled'))) &&
+                        (!noPets || (noPets && properties.includes('noPets'))) &&
+                        (!noChildren || (noChildren && properties.includes('noChildren'))) &&
+                        (!ac || (ac && properties.includes('AC')))
+                    )
                 )
-            )
+            }
         })
 
         if (before8) {
