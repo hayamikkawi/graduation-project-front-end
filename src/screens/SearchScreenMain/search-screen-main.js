@@ -7,6 +7,7 @@ import SearchResult from '../SearchResults/search-result-screen';
 import SearchResultExpanded from '../SearchResults/search-result-expanded';
 import Filtration from '../Filtration/filtration';
 import MapViewScreen from '../MapViewScreen/map-view-screen';
+import Profile from '../ProfileScreen/profile';
 
 const SearchScreenMain = () => {
   const Stack = createNativeStackNavigator();
@@ -20,7 +21,6 @@ const SearchScreenMain = () => {
             backgroundColor: '#262a2d'
           }
         }
-
       }
     >
       <Stack.Screen
@@ -46,6 +46,10 @@ const SearchScreenMain = () => {
       <Stack.Screen
         name='SearchMap'
         component={MapViewScreen}
+      />
+      <Stack.Screen
+      name='Profile-Main'
+      component={Profile}
       />
     </Stack.Navigator>
 

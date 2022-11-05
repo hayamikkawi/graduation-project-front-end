@@ -3,10 +3,10 @@ import React from 'react'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable'
 
-const CommentCard = ({ name, comment }) => {
+const CommentCard = ({ onReviewerPress, name, comment }) => {
     return (
         <View style={styles.root}>
-            <Pressable style={styles.flexBig}>
+            <Pressable style={styles.flexBig} onPress={onReviewerPress}>
                 <View style={styles.flex}>
                     <Ionicon name='person-circle' size={25} color={'white'} />
                     <Text style={[styles.text, { marginLeft: '5%' }, { fontFamily: 'kanyon-bold' }]}>{name}:</Text>

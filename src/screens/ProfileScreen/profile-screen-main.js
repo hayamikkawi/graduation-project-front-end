@@ -3,12 +3,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Profile from './profile'
 import ProfileEdit from './profile-edit'
 import ProfileVerify from './profile-verify'
-import SignInScreen from '../SigInScreen/signin-screen'
 import PasswordChange from './profile-password-change'
-import RoleChange from './profile-become-driver'
 import SignUpDriver from '../SignUpDriverScreen/sign-up-driver'
 
-const ProfileScreenMain = () => {
+const ProfileScreenMain = ({route}) => {
     const ProfileStack = createNativeStackNavigator()
     return (
         <ProfileStack.Navigator
@@ -23,6 +21,7 @@ const ProfileScreenMain = () => {
             <ProfileStack.Screen
                 name='Profile-Main'
                 component={Profile}
+                initialParams = {{id: 0, other:false, setIsSigned: route.params.setIsSigned}}
             />
             <ProfileStack.Screen
                 name='Profile-Edit'

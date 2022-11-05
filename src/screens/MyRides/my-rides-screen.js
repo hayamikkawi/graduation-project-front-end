@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const RoleChange = () => {
+const MyRidesScreen = () => {
   return (
     <View>
-      <Text>RoleChange</Text>
+      <Text>MyRidesScreen</Text>
     </View>
   )
 }
 
-export default RoleChange
+export default MyRidesScreen

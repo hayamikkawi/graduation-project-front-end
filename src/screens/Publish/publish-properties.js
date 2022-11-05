@@ -50,7 +50,7 @@ const PublishProperties = ({ navigation, route }) => {
       <View style={styles.container}>
         <View style={styles.propContainer}>
           <Image source={CarSeat} style={styles.icon} resizeMode="contain" />
-          <Text style={styles.text}> Only two passengers in the back seat.</Text>
+          <Text style={styles.text}> Only 2 passengers in the back seat.</Text>
           <Checkbox
             value={onlyTwo}
             onValueChange={setOnlyTwo}
@@ -143,7 +143,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // justifyContent: 'space-between', 
     //borderWidth: 1, 
-    marginBottom: '5%'
+    marginBottom: '5%', 
+    flexWrap: 'wrap'
 
   },
   checkbox: {

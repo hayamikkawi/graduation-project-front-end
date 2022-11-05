@@ -10,12 +10,14 @@ import HomeScreen from './src/screens/HomeScreen/home-screen.js';
 import SignUpDriver from './src/screens/SignUpDriverScreen/sign-up-driver.js';
 import *   as SecureStore from 'expo-secure-store'
 import { useState, useEffect, useReducer } from 'react'
+import SignUpScreen2 from './src/screens/SignUpScreen/sign-up-second.js';
 
 export default function App() {
   const [isSigned, setIsSigned] = useState(false)
-
+  
   useEffect(() => {
     async function isLoggedIn() {
+    //  await SecureStore.setItemAsync('secureToken', '')
       const storedToken = await SecureStore.getItemAsync('secureToken')
       if (!storedToken || storedToken.length == 0) {
         setIsSigned(false)
@@ -26,7 +28,7 @@ export default function App() {
       }
     }
     isLoggedIn()
-  }, [])
+  }, [isSigned])
 
 
   let [fontsLoaded] = useFonts({
@@ -38,7 +40,6 @@ export default function App() {
     //return <AppLoading />;
     return <Text>hey</Text>
   }
-  // var isSigned = false
   const Stack = createNativeStackNavigator()
 
   return (
@@ -69,12 +70,17 @@ export default function App() {
             component={SignUpScreen}
           />
           <Stack.Screen
+            name='Sign Up2'
+            component={SignUpScreen2}
+          />
+          <Stack.Screen
             name="Sign Up Driver"
             component={SignUpDriver}
           />
           <Stack.Screen
             name="Home"
             component={HomeScreen}
+            initialParams={{setIsSigned: setIsSigned}}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -87,7 +93,7 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={HomeScreen}
-           // initialParams={{ setIsSigned: setIsSigned }}
+            initialParams={{ setIsSigned: setIsSigned }}
           />
         </Stack.Navigator>
       </NavigationContainer>

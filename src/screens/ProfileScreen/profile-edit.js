@@ -12,13 +12,14 @@ import * as ImagePicker from 'expo-image-picker'
 import ErrorMessage from '../../components/ErrorMessage/error-message'
 import SucceedModal from '../../components/Modals/succeed-modal'
 import CustomHeader from '../../components/Header/header'
+import API_URL from '../../App_URL'
 
 const ProfileEdit = ({ navigation, route }) => {
-    const { user, setUser } = route.params
+    const { user, setUser, setImageURL } = route.params
     const [bio, setBio] = useState(user.bio)
     const [token, setToken] = useState('')
     const [hasPermession, setHasPermession] = useState(null)
-    const [profilePic, setProfilePic] = useState(user.profilePic)
+    const [profilePic, setProfilePic] = useState(route.params)
     const [disabled, setDisabled] = useState(true)
     const [success, setSuccess] = useState(false)
 
@@ -34,10 +35,7 @@ const ProfileEdit = ({ navigation, route }) => {
         requestPermession()
     }, [])
     const onPPEditPressed = () => {
-        setSuccess(true)
-        // const newUser = JSON.parse(JSON.stringify(user))
-        // newUser.profilePic = profilePic
-        // setUser(newUser)
+        console.log('hey')
         const pic = new FormData()
         pic.append('filename', 'profilePic')
         pic.append('file', {
@@ -45,8 +43,9 @@ const ProfileEdit = ({ navigation, route }) => {
             type: profilePic.type,
             name: profilePic.fileName
         })
-        axios.post('/user/update', data, {
+        axios.patch(`${API_URL}/me/changeProfilePicture`, pic, {
             headers: {
+                'Content-Type': 'multipart/form-data', 
                 'Authorization': 'Bearer ' + token
             }
         }).then((res) => {
@@ -55,6 +54,8 @@ const ProfileEdit = ({ navigation, route }) => {
                 const newUser = JSON.parse(JSON.stringify(user))
                 newUser.profilePic = profilePic
                 setUser(newUser)
+                setImageURL(profilePic.uri)
+
             }
         }).catch((err) => {
             return <ErrorMessage message={'An error occured'} />
@@ -78,31 +79,29 @@ const ProfileEdit = ({ navigation, route }) => {
         }
     }
     const onBioChangePressed = async () => {
-        setSuccess(true)
-        const newUser = JSON.parse(JSON.stringify(user))
-        newUser.bio = bio
-        setUser(newUser)
-        // axios.post('/user/update', {
-        //     bio: bio
-        // }, {
-        //     headers: {
-        //         'Authorization': 'Bearer ' + token
-        //     }
-        // }).then((res) => {
-        //     if (res.status == 200) {
-        //         setSuccess(true)
-        //         setUserBio(bio)
-        //     }
-        // }).catch((err) => {
-        //     console.log(err)
-        // })
+        axios.patch(`${API_URL}/me/changeBio`, {
+            bio: bio
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then((res) => {
+            if (res.status == 200) {
+                setSuccess(true)
+                const newUser = JSON.parse(JSON.stringify(user))
+                newUser.bio = bio
+                setUser(newUser)
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
     }
     const onChangePasswordPressed = () => {
         navigation.navigate('Profile-ChangePass')
     }
     const onChangeRolePressed = () => {
         navigation.navigate('Profile-ChangeRole', {
-            roleChange : true
+            roleChange: true
         })
     }
     return (
@@ -114,11 +113,11 @@ const ProfileEdit = ({ navigation, route }) => {
                 onPress={() => {
                     setSuccess(false)
                 }}
-                message={'You update was successfully done.'}
+                message={'Your update was successfully done.'}
             />
             <View style={styles.outer}>
                 <View style={styles.flex}>
-                    <ProfilePic source={profilePic} radius={100} />
+                    <ProfilePic source={{uri: profilePic.uri}} radius={100} />
                     <Pressable onPress={selectPic}>
                         <Text style={[styles.text, { textDecorationLine: 'underline' }]}>
                             Choose a new profile picture

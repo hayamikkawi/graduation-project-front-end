@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import PublishSource from '../Publish-Source/publish-source'
-import PublishDestination from '../Publish-Deastination/publish-destination'
-import PublishRoute from '../Publish-Route/publish-route'
-import PublishTimeDetails from '../PublishTimeDetails/publish-time-details'
-import PublishDateDetails from '../PublishDateDetails/publish-date-details'
-import PublishProperties from '../PuclishProperties/publish-properties'
-import PublishNumber from '../Publish-Number/publish-number'
+import PublishSource from './publish-source'
+import PublishDestination from './publish-destination'
+import PublishRoute from './publish-route'
+import PublishTimeDetails from './publish-time-details'
+import PublishDateDetails from './publish-date-details'
+import PublishProperties from './publish-properties'
+import PublishNumber from './publish-number'
 import UnauthorizedDriver from '../Unauthorized/unauthorized-driver'
 import * as SecureStore from 'expo-secure-store'
 import SignUpDriver from '../SignUpDriverScreen/sign-up-driver'
+import { useFocusEffect } from '@react-navigation/native';
 
 const PublishScreenMain = () => {
     const Stack = createNativeStackNavigator()
     const [role, setRole] = useState('')
-    useEffect(() => {
+    useFocusEffect(React.useCallback(() => {
         async function fetchRole() {
             const userString = await SecureStore.getItemAsync('user')
             const user = JSON.parse(userString)
@@ -23,8 +24,8 @@ const PublishScreenMain = () => {
         }
         fetchRole()
     }, [])
+    )
 
-    console.log('role2: ' + role)
     return (
         role === 'driver' ?
             <Stack.Navigator

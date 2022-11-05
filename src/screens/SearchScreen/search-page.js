@@ -44,15 +44,18 @@ const SearchPage = ({ navigation }) => {
             setIsError(true)
             console.log('error')
             error = true
-        } else{
+        } else {
             setIsError(false)
         }
     }
     const onSearchClicked = async () => {
         validate()
+       
         if (error) return
         else {
             const token = await SecureStore.getItemAsync('secureToken')
+            console.log('number of passengers')
+            console.log(parseInt(numberOfPassengers))
             axios.post(`${API_URL}/ride/search`, {
                 sourceId,
                 destinationId,
@@ -63,20 +66,21 @@ const SearchPage = ({ navigation }) => {
                     'Authorization': 'Bearer ' + token
                 }
             }).then((res) => {
+                console.log(res.status)
                 if (res.status == 400) {
 
-                } else if (res.status == 404) {
-                    const data = []
-                    navigation.navigate('SearchResult', data)
                 } else if (res.status == 200) {
                     const data = res.data
-                    data.pop()
+                    if(data.length > 0) data.pop()
                     console.log(data)
-                    navigation.navigate('SearchResult', data)
+                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers})
                 }
 
             }).catch((err) => {
-                console.log(err)
+                if(err.response.status == 404){
+                    const data = []
+                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers})
+                } 
             })
         }
     }
@@ -146,7 +150,7 @@ const SearchPage = ({ navigation }) => {
                 >
                     <Text style={{ color: 'white', fontFamily: 'kanyon-bold', fontSize: 17 }}>Search</Text>
                 </Pressable>
-                {isError? <ErrorMessage message={'Please fill all fields.'} />: null}
+                {isError ? <ErrorMessage message={'Please fill all fields.'} /> : null}
             </ScrollView>
         </KeyboardAvoidingView>
     )
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
     },
     container: {
         width: '80%',
-        marginTop: '-5%',
+        marginTop: '-10%',
         borderTopLeftRadius: '20%',
         borderTopRightRadius: '20%',
         backgroundColor: 'rgba(26,29,29, 0.8)',
@@ -184,9 +188,7 @@ const styles = StyleSheet.create({
         marginBottom: '5%'
     },
     datePicker: {
-        // backgroundColor:'red', 
         marginTop: '-10%',
-        // marginRight: '30%'
     },
     image: {
         width: '110%',

@@ -135,7 +135,7 @@ const styles = StyleSheet.create(
         },
         root: {
             alignItems: 'center',
-            marginTop: '10%'
+            marginTop: '5%'
         },
         inputContainer: {
             flexDirection: 'row'

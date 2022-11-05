@@ -13,6 +13,7 @@ import { Buffer } from "buffer";
 
 const SearchResultExpanded = ({ route, navigation }) => {
     const [ride, setRide] = useState(route.params.ride)
+    const numberOfPassengersToReserve = route.params.numberOfPassengers
     const [numberOfSeats, setNumberOfSeats] = useState(ride.rideProperty.numberOfAvailableSeats)
     const [modalVisible, setModalVisible] = useState(false);
     const [modalFailVisible, setModalFailVisible] = useState(false);
@@ -32,7 +33,8 @@ const SearchResultExpanded = ({ route, navigation }) => {
         const token = await SecureStore.getItemAsync('secureToken')
         console.log('reserve')
         axios.post(`${API_URL}/ride/reserve`, {
-            rideId: ride.rideProperty.rideId
+            rideId: ride.rideProperty.rideId, 
+            numberOfPassengers: numberOfPassengersToReserve 
         }, {
             headers: {
                 'Authorization': 'Bearer ' + token
@@ -40,16 +42,26 @@ const SearchResultExpanded = ({ route, navigation }) => {
         }).then((res) => {
             console.log('result' + res.data)
             if (res.status == 200) {
-                setNumberOfSeats(numberOfSeats - 1)
+                setNumberOfSeats(numberOfSeats - numberOfPassengersToReserve)
                 setModalVisible(true)
+               // navigation.navigate('Search1')
 
-            } else if (res.status == 400) {
-
-            } else if (res.status == 403) {
-                
-            }
+            } 
         }).catch((err) => {
             setModalFailVisible(true)
+        })
+    }
+    const onVisitPressed = () => {
+        navigation.navigate('Profile-Main', {
+            id: ride.user.id,
+            other: true
+        })
+    }
+    const onPassengerPress = (userId) => {
+        console.log(userId)
+        navigation.navigate('Profile-Main', {
+            id: userId, 
+            other: true
         })
     }
     return (
@@ -60,7 +72,7 @@ const SearchResultExpanded = ({ route, navigation }) => {
                     setModalVisible(false)
                     setButtonDisabled(true)
                 }}
-                message={!ride.rideProperty.bookingInstantly ? 'Your Reservation Request Has Been Sent' : 'Reserved Successfully'}
+                message={!ride.rideProperty.bookingInstantly ? 'Your Reservation Request Has Been Sent' : 'Your Reservation Was Successfully Done'}
             />
             <SucceedModal modalVisible={modalFailVisible}
                 setModalVisible={setModalFailVisible}
@@ -80,15 +92,14 @@ const SearchResultExpanded = ({ route, navigation }) => {
                     <View style={styles.driverContainer}>
                         <ProfilePic source={{ uri: imageURL }} radius={60} />
                         <Text style={styles.text}>{ride.user && ride.user.username}</Text>
-                        <CustomButton text={'Visit'} width={'30%'} />
+                        <CustomButton text={'Visit'} width={'30%'} onPress={onVisitPressed} />
                     </View>
                 </View>
                 <View style={styles.view}>
                     <CustomHeader text={'Passengers'} size={25} />
                     {passengers.map((pass) => {
                         return (
-                            <Pressable style={styles.driverContainer} key={pass.userId}>
-                                {/* <ProfilePic source={DriverPic} radius={60} /> */}
+                            <Pressable style={styles.driverContainer} key={pass.userId} onPress={()=>onPassengerPress(pass.userId)}>
                                 <Text style={styles.text}>{pass.name}</Text>
                                 <Ionicons name='caret-forward' color={'#1093c9'} size={25} />
                             </Pressable>

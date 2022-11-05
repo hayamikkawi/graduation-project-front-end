@@ -4,69 +4,99 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import { useWindowDimensions } from 'react-native'
 import ProfilePic from '../../components/ProfilePicture/profile-pic'
-import User from '../../../assets/user/F38.jpg'
 import CustomHeader from '../../components/Header/header'
 import CustomButton from '../../components/CustomButton'
 import { Rating, AirbnbRating } from 'react-native-ratings'
-import CommentCard from '../../components/Cards/comment-card'
 import * as SecureStore from 'expo-secure-store'
 import API_URL from '../../App_URL'
+import RatingModal from '../../components/Modals/rating-modal'
+import { Buffer } from "buffer";
+import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = ({ navigation, route }) => {
-
-    const dummyUser = {
-        username: 'Haya Mikkawi',
-        email: 'hayamikkawi@gmail.com',
-        mobileNumber: '0595564459',
-        role: 'user',
-        bio: 'Haya Mikkawi, 21 year old from Nablus, Software Engineer at Apple-Rawabi and student at NNU',
-        rating: 2.5,
-        dateOfBirth: '2000.11.23',
-        gender: 'female',
-        phoneVerified: false,
-        emailVerified: true,
-        profilePic: User, 
-        reviews: [{
-            id: 1,
-            reviewer: 'Aya',
-            comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tellus dui, mollis elementum odio at, vestibulum cursus odio. Donec in velit posuere, volutpat urna at, luctus felis. Donec accumsan erat ac nisi egestas, non volutpat ante accumsan. In lacinia massa sed dui ultricies porta id sollicitudin quam. Integer vehicula viverra lacus a feugiat. Curabitur a dignissim urna, et mattis felis. Morbi sagittis et nisl non dignissim. Maecenas nec aliquet nulla. Vivamus laoreet bibendum nibh at rutrum. Curabitur quis ante id neque porta pharetra ut vel nulla. Sed nec lectus lectus."
-        }, {
-            id: 2,
-            reviewer: 'dana',
-            comment: 'A little bit late!'
-        }]
-    }
+    const [id, setId] = useState(route.params.id)
+    const [rating, setRating] = useState(false)
+    const [role, setRole] = useState('')
+    const { other } = route.params
     const { height } = useWindowDimensions()
-    const [user, setUser] = useState(dummyUser)
-    const [bio, setUserBio] = useState(user.bio)
-    const [pic, setUserPic] = useState(user.profilePic)
-
+    // const dummyUser = {
+    //     id: 1, 
+    //     username: 'Haya Mikkawi',
+    //     email: 'hayamikkawi@gmail.com',
+    //     mobileNumber: '0595564459',
+    //     role: 'user',
+    //     bio: 'Haya Mikkawi, 21 year old from Nablus, Software Engineer at Apple-Rawabi and student at NNU',
+    //     rating: 2.5,
+    //     dateOfBirth: '2000.11.23',
+    //     gender: 'female',
+    //     phoneVerified: false,
+    //     emailVerified: true,
+    //     profilePic: User,
+    //     reviews: [{
+    //         id: 1,
+    //         reviewer: 'Aya',
+    //         comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tellus dui, mollis elementum odio at, vestibulum cursus odio. Donec in velit posuere, volutpat urna at, luctus felis. Donec accumsan erat ac nisi egestas, non volutpat ante accumsan. In lacinia massa sed dui ultricies porta id sollicitudin quam. Integer vehicula viverra lacus a feugiat. Curabitur a dignissim urna, et mattis felis. Morbi sagittis et nisl non dignissim. Maecenas nec aliquet nulla. Vivamus laoreet bibendum nibh at rutrum. Curabitur quis ante id neque porta pharetra ut vel nulla. Sed nec lectus lectus.",
+    //         reviewerId: 4
+    //     }, {
+    //         id: 2,
+    //         reviewer: 'dana',
+    //         comment: 'A little bit late!',
+    //         reviewId: 5
+    //     }]
+    // }
+    const [user, setUser] = useState('')
+    const [imageURL, setImageURL] = useState('')
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchUserId = async () => {
+                console.log('fetching data')
+                console.log('other:' + other)
+                if (!other) {
+                    const userString = await SecureStore.getItemAsync('user')
+                    const user = JSON.parse(userString)
+                    console.log('id: ' + user.id)
+                    setId(user.id)
+                    setRole(user.role)
+                }
+            }
+            //if (!other && id == 0)
+                fetchUserId()
+        }, [])
+    )
     useEffect(() => {
-        console.log('opening profile image')
         const fetchUserData = async () => {
             const token = await SecureStore.getItemAsync('secureToken')
-            axios.get('/user/me', {
+            console.log(`${API_URL}/users/profile/${id}`)
+            axios.get(`${API_URL}/users/profile/${id}`, {
                 headers: {
                     'Authorization': 'Bearer ' + token
-                }
+                },
+
             }).then((res) => {
                 if (res.status == 200) {
-                    setUser(res.data.user)
+                    setUser(res.data)
+                    try {
+                        const b = new Buffer.from(res.data.profilePicture.data, 'binary').toString('base64')
+                        setImageURL('data:image/jpeg;base64,' + b)
+                    } catch (err) {
+                        console.log(err)
+                    }
                 }
             }).catch((err) => {
                 console.log(err)
             })
         }
-        //  fetchUserData()
-        return () => {
-
-        };
-    }, [])
+       // if (id != 0)
+            fetchUserData()
+    }, [id, role])
 
     const onEditPress = () => {
+        console.log('edit')
         navigation.navigate('Profile-Edit', {
-            user, 
-            setUser
+            user,
+            setUser,
+            uri: imageURL,
+            setImageURL
         })
     }
     const onVerifyPress = () => {
@@ -76,25 +106,41 @@ const Profile = ({ navigation, route }) => {
     }
     const onLogoutPress = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
-        axios.post(`${API_URL}/users/logout`, {}, {
+        axios.post(`${API_URL}/me/logout`, {}, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
         }).then(async (res) => {
             if (res.status == 200) {
                 await SecureStore.deleteItemAsync('secureToken')
-                navigation.navigate("Log in")
-               //route.params.setIsSigned(false)
+                await SecureStore.deleteItemAsync('user')
+                route.params.setIsSigned(false)
+                navigation.navigate("Pre")
+                //route.params.setIsSigned(false)
             }
         }).catch((err) => {
             console.log(err)
         })
     }
+    const onContactPress = () => {
+
+    }
+    const onRatePress = () => {
+        setRating(true)
+    }
+    const onReviewerPress = () => {
+        navigation.navigate('Profile-Main', {
+            id: id,
+            other: true
+        })
+    }
     return (
         <ScrollView style={styles.root}>
+            <RatingModal modalVisible={rating} onPress={() => setRating(false)} />
             <View style={styles.header}>
                 <View style={[styles.div, { height: 0.3 * height }]}>
-                    <ProfilePic source={user.profilePic} radius={180} style={[styles.img, { marginTop: .5 * .3 * height }]} />
+                    {imageURL && <ProfilePic source={{ uri: imageURL }} radius={180} style={[styles.img, { marginTop: .5 * .3 * height }]} />
+                    }
                 </View>
                 <View style={styles.userMain}>
                     <View style={[{ marginTop: .3 * .3 * height }]}>
@@ -107,19 +153,24 @@ const Profile = ({ navigation, route }) => {
                                 count={5}
                                 defaultRating={user.rating}
                                 size={20}
+                                isDisabled={true}
                             />
                         </View>
                         <View style={styles.bio}>
                             <Text style={styles.text}>{user.bio}</Text>
                         </View>
-                        <View style={styles.flex}>
-                            <CustomButton width='20%' icon={'build'} onPress={onEditPress} />
-                            {(user.phoneVerified == true && user.emailVerified == true) ?
-                                <CustomButton width='20%' icon={'checkmark-done'} bgcolor='#80B362' /> :
-                                <CustomButton width='20%' icon={'shield-checkmark'} onPress={onVerifyPress} />
-                            }
-                            <CustomButton width='20%' icon={'log-out'} onPress={onLogoutPress} />
-                        </View>
+                        {other ?
+                            <View style={styles.flex}>
+                                <CustomButton width='35%' text={'Contact'} onPress={onContactPress} />
+                                <CustomButton width='35%' text={'Rate'} onPress={onRatePress} />
+                            </View> : <View style={styles.flex}>
+                                <CustomButton width='20%' icon={'build'} onPress={onEditPress} />
+                                {(user.phoneVerified == true && user.emailVerified == true) ?
+                                    <CustomButton width='20%' icon={'checkmark-done'} bgcolor='#80B362' /> :
+                                    <CustomButton width='20%' icon={'shield-checkmark'} onPress={onVerifyPress} />
+                                }
+                                <CustomButton width='20%' icon={'log-out'} onPress={onLogoutPress} />
+                            </View>}
                     </View>
                 </View>
             </View>
@@ -144,13 +195,17 @@ const Profile = ({ navigation, route }) => {
                     <Text style={styles.text}>   {user.mobileNumber}</Text>
                 </View>
             </View>
-            <View style={styles.contactInfo}>
+            {/* <View style={styles.contactInfo}>
                 <CustomHeader text={'Reviews'} size={17} />
                 {user.reviews.length == 0 && <Text style={styles.text}>No Reviews</Text>}
                 {user.reviews.map((review) => {
-                    return <CommentCard key={review.id} name={review.reviewer} comment={review.comment} />
+                    return <CommentCard
+                        key={review.id}
+                        name={review.reviewer}
+                        comment={review.comment}
+                        onReviewerPress = {onReviewerPress} />
                 })}
-            </View>
+            </View> */}
         </ScrollView>
     )
 }
@@ -179,6 +234,8 @@ const styles = StyleSheet.create({
     },
     bio: {
         width: '80%',
+        marginHorizontal: '15%',
+        alignItems: 'center'
     },
     text: {
         color: 'white',

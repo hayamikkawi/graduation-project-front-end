@@ -6,7 +6,6 @@ import Unauthorized from '../../../assets/myIcons/401.png'
 
 const UnauthorizedDriver = ({ navigation }) => {
     const onBecomeDriverPressed = () => {
-        console.log('hey')
         navigation.navigate('Profile-ChangeRole', {
             roleChange: true
         })

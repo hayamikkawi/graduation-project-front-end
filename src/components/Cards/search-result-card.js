@@ -3,11 +3,12 @@ import React from 'react'
 import SearchResultCardInner from './search-result-card-inner';
 
 
-const SearchResultCard = ({ ride, navigation }) => {
+const SearchResultCard = ({ ride, navigation, numberOfPassengers }) => {
     const onPress = () => {
         console.log('pressed:' + ride.id)
         navigation.navigate('SearchResultExpanded', {
-            ride
+            ride: ride, 
+            numberOfPassengers: numberOfPassengers
         })
     }
     return (

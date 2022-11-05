@@ -6,8 +6,9 @@ import CustomButton from '../../components/CustomButton'
 import NoResults from '../../components/NoResultsFound/no-results'
 
 const SearchResult = ({ navigation, route }) => {
-  const [searchResult, setSearchResult] = useState(route.params)
-  const [allSearchResult, setAllSearchResult] = useState(route.params)
+  const [searchResult, setSearchResult] = useState(route.params.data)
+  const [allSearchResult, setAllSearchResult] = useState(route.params.data)
+  const numberOfPassengersToReserve = route.params.numberOfPassengers
   const onFilterPressed = () => {
     //console.log(searchResult)
     navigation.navigate('SearchFilter',
@@ -22,10 +23,15 @@ const SearchResult = ({ navigation, route }) => {
         <CustomHeader text={'Results'} textColor={'white'} width={'30%'} />
         <CustomButton text={'filter'} width={'20%'} onPress={onFilterPressed} />
       </View>
-      {searchResult.length == 0 && <NoResults text={'No results found'}/>}
+      {(searchResult.length == 0) && <NoResults text={'No results found'} />}
       {
         searchResult.map((ride) => {
-          return <SearchResultCard ride={ride} key={ride.rideProperty.rideId} navigation={navigation} />
+          return <SearchResultCard
+            ride={ride}
+            key={ride.rideProperty.rideId}
+            navigation={navigation}
+            numberOfPassengers={numberOfPassengersToReserve}
+          />
         })
       }
     </ScrollView>

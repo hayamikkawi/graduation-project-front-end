@@ -29,28 +29,29 @@ const PasswordChange = () => {
             setErrorMessage('Passwords Do Not Match.')
             return false
         }
-        setError(flase)
+        setError(false)
         return true
     }
 
     const onChangePasswordPressed = async () => {
         if (!validate()) return
         const token = await SecureStore.getItemAsync('secureToken')
-        axios.post(`${API_URL}/user/update`, {
+        axios.patch(`${API_URL}/me/changePassword`, {
             oldPassword,
             newPassword
         }, {
             headers: {
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
+                'Authorization': 'Bearer ' + token
             }
         }).then((res) => {
             if (res.status == 200) {
                 setModalVisible(true)
             }
         }).catch((err) => {
-
+            if(err.response.status == 403){
+                setError(true)
+                setErrorMessage('Old password is wrong')
+            }
         })
     }
     return (

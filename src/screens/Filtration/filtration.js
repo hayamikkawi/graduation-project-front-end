@@ -82,24 +82,24 @@ const Filtration = ({ navigation, route }) => {
 
         if (before8) {
             newRides = newRides.filter((ride) => {
-                return (ride.time <= "08:00")
+                return (ride.time <= "08:00:00")
             })
         } else if (between) {
             newRides = newRides = newRides.filter((ride) => {
                 const t = ride.time
 
-                return (t > "08:00" && t <= "17:00")
+                return (t > "08:00:00" && t <= "17:00:00")
             })
         } else if (after4) {
             newRides = newRides.filter((ride) => {
-                return (ride.time > "17:00")
+                return (ride.time > "17:00:00")
             })
         }
 
         if (closestToOrigin) {
-            newRides.sort((ride1, ride2) => { return (ride1.distancefromSource - ride2.distancefromSource) })
+            newRides.sort((ride1, ride2) => { return (ride1.sourcesDistance - ride2.sourcesDistance) })
         } else if (closestToDest) {
-            newRides.sort((ride1, ride2) => { return (ride1.distanceFromDestination - ride2.distanceFromDestination) })
+            newRides.sort((ride1, ride2) => { return (ride1.destinationsDistance - ride2.destinationsDistance) })
         }
 
         route.params.setRides(newRides)

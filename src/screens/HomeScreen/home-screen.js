@@ -6,7 +6,7 @@ import SignInScreen from '../SigInScreen/signin-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchPage from '../SearchScreen/search-page';
 import SearchScreenMain from '../SearchScreenMain/search-screen-main';
-import PublishScreenMain from '../PublishScreenMain/publish-screen-main';
+import PublishScreenMain from '../Publish/publish-screen-main';
 import ProfileScreenMain from '../ProfileScreen/profile-screen-main';
 
 const Tab = createBottomTabNavigator();
@@ -45,7 +45,7 @@ const HomeScreen = ({ navigation, route }) => {
       <Tab.Screen
         name="Profile"
         component={ProfileScreenMain}
-      //  initialParams={{ setIsSigned: route.params.setIsSigned }}
+        initialParams={{ setIsSigned: route.params.setIsSigned }}
       />
     </Tab.Navigator>
     // </NavigationContainer>
