@@ -18,7 +18,8 @@ const PublishDateDetails = ({navigation, route}) => {
             sourceId: route.params.sourceId, 
             destDescription: route.params.destDescription, 
             destId: route.params.destId, 
-            date: date.toDateString()
+            date: date.toDateString(), 
+            selectedRoute: route.params.selectedRoute
         })
     }
     return (

@@ -7,13 +7,45 @@ import styles from './styles'
 import { RadioButton } from 'react-native-paper';
 import axios from 'axios';
 import API_URL from '../../App_URL';
+import * as Notifications from 'expo-notifications'
+import * as Device from 'expo-device'
 import * as SecureStore from 'expo-secure-store'
 
 const SignUpScreen2 = ({ navigation, route }) => {
     const [isEnabled, setIsEnabled] = useState(false);
     const [gender, setGender] = useState('male')
     const [dateOfBirth, setDateOfBirth] = useState(new Date())
+    const [expoPushToken, setExpoPushToken] = useState()
 
+    registerForPushNotificationsAsync = async () => {
+        if (Device.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            const token = (await Notifications.getExpoPushTokenAsync()).data;
+            console.log(token);
+            setExpoPushToken(token)
+            await SecureStore.setItemAsync('expoToken', token)
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+
+        if (Platform.OS === 'android') {
+            Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+            });
+        }
+    }
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     const setDateVal = (event, newDate) => {
         setDateOfBirth(newDate)
@@ -27,11 +59,12 @@ const SignUpScreen2 = ({ navigation, route }) => {
             password: route.params.password,
             email: route.params.email,
             mobileNumber: route.params.mobileNumber,
-            // gender: gender,
+            gender: gender,
             dateOfBirth: dateOfBirth
         })
     }
     const onSignupPressed = async () => {
+        await registerForPushNotificationsAsync()
         axios.post(`${API_URL}/users/signup`, {
             username: route.params.username,
             password: route.params.password,
@@ -39,7 +72,8 @@ const SignUpScreen2 = ({ navigation, route }) => {
             mobileNumber: route.params.mobileNumber,
             role: "user",
             gender: gender,
-            dateOfBirth: dateOfBirth
+            dateOfBirth: dateOfBirth, 
+            pushToken: expoPushToken
         }).then(async (res) => {
             if (res.status !== 201) {
                 console.log(res.data.message)
@@ -50,6 +84,8 @@ const SignUpScreen2 = ({ navigation, route }) => {
             let token = jsonRes
             await SecureStore.setItemAsync('secureToken', token);
             await SecureStore.setItemAsync('user', JSON.stringify(user))
+            await registerForPushNotificationsAsync()
+            //await registerExpoToken()
             navigation.navigate("Home")
         }).catch((err) => {
             console.error(err)

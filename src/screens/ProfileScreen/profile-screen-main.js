@@ -39,6 +39,10 @@ const ProfileScreenMain = ({route}) => {
                 name='Profile-ChangeRole'
                 component={SignUpDriver}
             />
+            <ProfileStack.Screen
+                name='Profile-Other'
+                component={Profile}
+            />
         </ProfileStack.Navigator>
     )
 }

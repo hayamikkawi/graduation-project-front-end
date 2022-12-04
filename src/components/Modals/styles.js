@@ -7,13 +7,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 22,
     },
-    succeedModalView:{
-        width: '90%', 
-        height: '40%', 
-        marginHorizontal: '5%', 
-        backgroundColor: 'white', 
-        borderRadius: 20, 
-        paddingVertical: '10%', 
+    succeedModalView: {
+        width: '90%',
+        height: '40%',
+        marginHorizontal: '5%',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingVertical: '10%',
         alignItems: 'center',
         shadowColor: '#ff',
         shadowOffset: {
@@ -49,6 +49,13 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontFamily: 'kanyon-bold'
     },
+    modalTextError: {
+        marginBottom: 15,
+        textAlign: 'center',
+        color: 'black',
+        fontSize: 22,
+        fontFamily: 'kanyon-bold'
+    },
     modalButtons: {
         width: '100%',
         flexDirection: 'row',
@@ -57,20 +64,20 @@ const styles = StyleSheet.create({
         marginTop: '5%'
     },
     button: {
-        width: '20%', 
-    }, 
+        width: '20%',
+    },
     flex: {
-        flexDirection: 'row', 
-        justifyContent: 'space-around', 
-        alignContent: 'center', 
-        padding: '5%', 
-        width: '90%', 
-        marginHorizontal: '5%', 
-        alignItems: 'center', 
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignContent: 'center',
+        padding: '5%',
+        width: '90%',
+        marginHorizontal: '5%',
+        alignItems: 'center',
         flexWrap: 'wrap'
-    }, 
+    },
     textInput: {
-        width: '100%', 
+        width: '100%',
         borderRadius: '5%'
     }
 })

@@ -50,7 +50,6 @@ const SearchPage = ({ navigation }) => {
     }
     const onSearchClicked = async () => {
         validate()
-       
         if (error) return
         else {
             const token = await SecureStore.getItemAsync('secureToken')
@@ -70,16 +69,23 @@ const SearchPage = ({ navigation }) => {
                 if (res.status == 400) {
 
                 } else if (res.status == 200) {
+                    
                     const data = res.data
-                    if(data.length > 0) data.pop()
+                    var expectedData = {'distance': 0, 'time': 0}
+                    if(data.length > 0){
+                         expectedData = res.data.slice(-1)[0]
+                        // console.log(expectedData)
+                        data.pop()
+                    } 
                     console.log(data)
-                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers})
+                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers, expectedData: expectedData})
                 }
 
             }).catch((err) => {
-                if(err.response.status == 404){
+                if(err.response && err.response.status == 404){
                     const data = []
-                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers})
+                    const expectedData = {'dictance': '', 'time': ''}
+                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers, expectedData: expectedData })
                 } 
             })
         }

@@ -21,6 +21,7 @@ const PublishTimeDetails = ({ navigation, route }) => {
             destDescription: route.params.destDescription,
             destId: route.params.destId,
             date: route.params.date,
+            selectedRoute: route.params.selectedRoute, 
             time: amPm.toLowerCase() == 'pm'? `${(selectedHours + 12).toLocaleString('en-GB', {
                 minimumIntegerDigits: 2,
                 })}:${selectedMinutes.toLocaleString('en-GB', {

@@ -1,26 +1,56 @@
-import axios from 'axios'
 import React, { useState } from 'react'
-import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, KeyboardAvoidingView } from 'react-native'
-import Logo from '../../../assets/favicon.png'
+import { View, Image, StyleSheet, useWindowDimensions, ScrollView, KeyboardAvoidingView } from 'react-native'
 import Transport from '../../../assets/transport.png'
 import CustomButton from '../../components/CustomButton'
 import CustomInput from '../../components/CustomInput'
 import * as SecureStore from 'expo-secure-store'
 import ErrorMessage from '../../components/ErrorMessage/error-message'
 import Ionicon from 'react-native-vector-icons/Ionicons'
+import * as Notifications from 'expo-notifications'
+import * as Device from 'expo-device'
+import axios from 'axios'
 
 const API_URL = require('../../App_URL')
 
 const SignInScreen = ({ navigation }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-
+    const [expoPushToken, setExpoPushToken] = useState()
     const [isError, setIsError] = useState(false)
     const [error, setError] = useState('')
     const [valid, setValid] = useState(true)
     let isValidated = true
     const { height } = useWindowDimensions()
 
+    registerForPushNotificationsAsync = async () => {
+        if (Device.isDevice) {
+          const { status: existingStatus } = await Notifications.getPermissionsAsync();
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          const token = (await Notifications.getExpoPushTokenAsync()).data;
+          console.log(token);
+          setExpoPushToken(token)
+          await SecureStore.setItemAsync('expoToken', token)
+        } else {
+          alert('Must use physical device for Push Notifications');
+        }
+    
+        if (Platform.OS === 'android') {
+          Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+          });
+        }
+    };
     const validate = () => {
         if (username.trim() == '' || password.trim() == '') {
             console.log('Invalid')
@@ -33,17 +63,18 @@ const SignInScreen = ({ navigation }) => {
     }
     const onLoggedIn = async (token) => {
         await SecureStore.setItemAsync('secureToken', token);
-        const storedToken = await SecureStore.getItemAsync('secureToken')
     }
-    const onLoginPressed = () => {
+    const onLoginPressed = async() => {
         validate()
         if (!isValidated) {
             setError('Please Fill all Fields!')
             return
         }
+        await registerForPushNotificationsAsync()
         const payload = {
             username,
-            password
+            password,
+            pushToken: expoPushToken
         };
         fetch(`${API_URL}/users/login`, {
             method: 'POST',
@@ -58,17 +89,19 @@ const SignInScreen = ({ navigation }) => {
                         setIsError(true);
                         setError("Incorrect username or password");
                     } else {
+                        
                         const jsonRes = await res.json();
                         onLoggedIn(jsonRes.token);
                         setIsError(false);
                         setError(jsonRes.message);
                         const user = jsonRes.user
-                        await SecureStore.setItemAsync('user', JSON.stringify(user) )
+                        await SecureStore.setItemAsync('user', JSON.stringify(user))
                         navigation.navigate('Home')
                     }
 
                 } catch (err) {
-                    console.log(JSON.stringify(err));
+                    console.log('err')
+                    console.log(err);
                 };
             })
             .catch(err => {

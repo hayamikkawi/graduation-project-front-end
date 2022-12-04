@@ -17,7 +17,7 @@ export default function App() {
   
   useEffect(() => {
     async function isLoggedIn() {
-    //  await SecureStore.setItemAsync('secureToken', '')
+      //await SecureStore.setItemAsync('secureToken', '')
       const storedToken = await SecureStore.getItemAsync('secureToken')
       if (!storedToken || storedToken.length == 0) {
         setIsSigned(false)

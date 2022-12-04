@@ -11,32 +11,46 @@ import NoChildren from '../../../assets/myIcons/children.png'
 import AC from '../../../assets/myIcons/air-conditioner.png'
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import { Buffer } from "buffer";
+import CustomText from '../CustomText/custom-text';
 
-const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navigation }) => {
+const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navigation, asPassenger = false, asDriver = false }) => {
     var imageURL = ''
-    try {
+    if (!asDriver) {
+        // try {
         const b = new Buffer.from(ride.user.profilePicture, 'binary').toString('base64')
-        imageURL = 'data:image/jpeg;base64,'+b 
-    } catch(err){
-        console.log(err)
+        imageURL = 'data:image/jpeg;base64,' + b
+        // } catch (err) {
+        //     console.log(err)
+        // }
     }
     const icons = {
         'noSmoking': NoSmoke, 'girlsOnly': Female,
         'seatForDisabled': Disabled, 'noPets': NoAnimal, 'noChildren': NoChildren,
         'AC': AC, 'middleSeatEmpty': CarSeat
     }
+    const onViewRoutePress =() =>{
+        navigation.navigate('RouteMap', {
+           // selectedRoute : ride.selectedRoute
+        })
+    }
     return (
         <View>
             {nextIcon &&
                 <View>
                     <View style={styles.container}>
-                        <Text style={styles.text}>From:</Text>
+                        <CustomText text={'From:'} size={18} />
                         <Text style={styles.text}>{ride.source}</Text>
                     </View>
                     <View style={styles.container}>
-                        <Text style={styles.text}> To:   </Text>
+                        <CustomText text={'To:'} size={18} />
                         <Text style={styles.text}>{ride.destination}</Text>
                     </View>
+                </View>
+            }
+            {(asPassenger || asDriver) &&
+                <View style={styles.container}>
+                    <CustomText text={'On:'} size={18} />
+                    <Text style={styles.text}>{ride.date}</Text>
                 </View>
             }
             {!nextIcon &&
@@ -49,7 +63,7 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
                                 name: ride.source
                             })
                     }}>
-                        <Text style={styles.text}>From:</Text>
+                        <CustomText text={'From:'} size={18} />
                         <View style={styles.flex}>
                             <Text style={styles.text}>{ride.source}</Text>
                             <Ionicons name='caret-forward' size={25} color={'#1093c9'} />
@@ -59,26 +73,29 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
                         navigation.navigate('SearchMap',
                             {
                                 latitude: ride.destinationLatitude,
-                                longitude: ride.destinationLongitude, 
+                                longitude: ride.destinationLongitude,
                                 name: ride.destination
                             })
                     }}>
-                        <Text style={styles.text}> To:   </Text>
+                        <CustomText text={'To:'} size={18} />
                         <View style={styles.flex}>
                             <Text style={styles.text}>{ride.destination}</Text>
                             <Ionicons name='caret-forward' size={25} color={'#1093c9'} />
                         </View>
                     </Pressable>
+                    <Pressable style={styles.flex} onPress={onViewRoutePress}>
+                        <Text style={[styles.text, {textDecorationLine: 'underline'}]}>View Route</Text>
+                    </Pressable>
                 </View>
             }
             <View style={styles.container}>
-                <Text style={styles.text}> At:   </Text>
+                <CustomText text={'At:'} size={18} />
                 <Text style={styles.text}>{ride.time}</Text>
             </View>
-            {withDriver &&
+            {(withDriver && !asDriver) &&
                 <View style={styles.container}>
                     {
-                        ride.user && <ProfilePic source={{uri: imageURL}} radius={60} />
+                        ride.user && <ProfilePic source={{ uri: imageURL }} radius={60} />
                     }
                     <Text style={styles.text}>{ride.user && ride.user.username}</Text>
                 </View>
@@ -106,7 +123,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '3%', 
+        paddingHorizontal: '3%',
+        paddingVertical: '1%', 
         flexWrap: 'wrap'
     },
     iconsContainer: {

@@ -3,12 +3,13 @@ import React from 'react'
 import SearchResultCardInner from './search-result-card-inner';
 
 
-const SearchResultCard = ({ ride, navigation, numberOfPassengers }) => {
+const SearchResultCard = ({ ride, navigation, numberOfPassengers, asDriver = false, asPassenger = false  }) => {
     const onPress = () => {
-        console.log('pressed:' + ride.id)
         navigation.navigate('SearchResultExpanded', {
             ride: ride, 
-            numberOfPassengers: numberOfPassengers
+            numberOfPassengers: numberOfPassengers, 
+            asPassenger: asPassenger, 
+            asDriver: asDriver
         })
     }
     return (
@@ -17,7 +18,7 @@ const SearchResultCard = ({ ride, navigation, numberOfPassengers }) => {
             style={styles.root}
             onPress={onPress}
         >
-            <SearchResultCardInner ride={ride} />
+            <SearchResultCardInner ride={ride} asDriver = {asDriver} asPassenger ={asPassenger}/>
         </Pressable>
         // </ScrollView>
 

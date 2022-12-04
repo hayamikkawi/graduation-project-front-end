@@ -8,6 +8,8 @@ import CustomButtonForm from '../../components/CustomButtonForm/custom-button-fo
 import CustomButton from '../../components/CustomButton/custom-button';
 import * as SecureStore from 'expo-secure-store'
 import SucceedModal from '../../components/Modals/succeed-modal';
+import * as Notifications from 'expo-notifications'
+import * as Device from 'expo-device'
 
 const API_URL = require('../../App_URL')
 const SignUpDriver = ({ route, navigation }) => {
@@ -19,6 +21,7 @@ const SignUpDriver = ({ route, navigation }) => {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [expoPushToken, setExpoPushToken] = useState()
   const { roleChange } = route.params
 
   let isValid = false
@@ -75,20 +78,51 @@ const SignUpDriver = ({ route, navigation }) => {
     })
 
   }
+  registerForPushNotificationsAsync = async () => {
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+      setExpoPushToken(token)
+      await SecureStore.setItemAsync('expoToken', token)
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  }
   const onLoggedIn = async (token) => {
     await SecureStore.setItemAsync('secureToken', token);
   }
-  const onSignupPressed = () => {
+  const onSignupPressed = async() => {
     validate()
     if (!isValid) return
+    await registerForPushNotificationsAsync()
     axios.post(`${API_URL}/users/signup`, {
       username: route.params.username,
       password: route.params.password,
       email: route.params.email,
       mobileNumber: route.params.mobileNumber,
-      role: "driver", 
-      gender: route.params.gender, 
-      dateOfBirth: route.params.dateOfBirth 
+      role: "driver",
+      gender: route.params.gender,
+      dateOfBirth: route.params.dateOfBirth, 
+      pushToken: expoPushToken
     }).then(async (res) => {
       if (res.status !== 201) {
         console.log(res.data)
@@ -225,7 +259,7 @@ const SignUpDriver = ({ route, navigation }) => {
           </View>
           {valid ? '' : <ErrorMessage message={'Please Fill All Fields.'} />}
           <View style={styles.buttonContainer}>
-            <CustomButton type='TERTIARY'  icon='arrow-back' width='30%' onPress={goBack}/>
+            <CustomButton type='TERTIARY' icon='arrow-back' width='30%' onPress={goBack} />
             {roleChange ?
               <CustomButton text={'Become A Driver'} onPress={onBecomeDriverPressed} width='70%' /> :
               <CustomButton text={'Sign Up'} onPress={onSignupPressed} width='70%' />}
@@ -266,7 +300,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '80%',
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: 'center'
   },
   title: {

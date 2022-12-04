@@ -29,6 +29,7 @@ const PublishProperties = ({ navigation, route }) => {
       destId: route.params.destId,
       date: route.params.date,
       time: route.params.time,
+      selectedRoute: route.params.selectedRoute, 
       onlyTwo: onlyTwo,
       noSmoke: noSmoke,
       girlsOnly: girlsOnly,

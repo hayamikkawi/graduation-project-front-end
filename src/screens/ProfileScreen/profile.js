@@ -12,6 +12,7 @@ import API_URL from '../../App_URL'
 import RatingModal from '../../components/Modals/rating-modal'
 import { Buffer } from "buffer";
 import { useFocusEffect } from '@react-navigation/native';
+import CommentCard from '../../components/Cards/comment-card.js'
 
 const Profile = ({ navigation, route }) => {
     const [id, setId] = useState(route.params.id)
@@ -50,7 +51,6 @@ const Profile = ({ navigation, route }) => {
         React.useCallback(() => {
             const fetchUserId = async () => {
                 console.log('fetching data')
-                console.log('other:' + other)
                 if (!other) {
                     const userString = await SecureStore.getItemAsync('user')
                     const user = JSON.parse(userString)
@@ -59,8 +59,32 @@ const Profile = ({ navigation, route }) => {
                     setRole(user.role)
                 }
             }
-            //if (!other && id == 0)
+            const fetchUserData = async () => {
+                const token = await SecureStore.getItemAsync('secureToken')
+                console.log(`${API_URL}/users/profile/${id}`)
+                axios.get(`${API_URL}/users/profile/${id}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+
+                }).then((res) => {
+                    if (res.status == 200) {
+                        setUser(res.data)
+                        try {
+                            const b = new Buffer.from(res.data.profilePicture.data, 'binary').toString('base64')
+                            setImageURL('data:image/jpeg;base64,' + b)
+                        } catch (err) {
+                            console.log(err)
+                        }
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+            }
+            if (!other)
                 fetchUserId()
+            // if(id != 0)
+            //     fetchUserData()
         }, [])
     )
     useEffect(() => {
@@ -86,7 +110,7 @@ const Profile = ({ navigation, route }) => {
                 console.log(err)
             })
         }
-       // if (id != 0)
+        if (id != 0)
             fetchUserData()
     }, [id, role])
 
@@ -123,20 +147,27 @@ const Profile = ({ navigation, route }) => {
         })
     }
     const onContactPress = () => {
-
+        navigation.navigate('Chat Screen', {
+            receiver:  {
+                _id: id,
+                name: user.username,
+                profilePicture: null
+              }
+        })
     }
     const onRatePress = () => {
         setRating(true)
     }
-    const onReviewerPress = () => {
-        navigation.navigate('Profile-Main', {
-            id: id,
-            other: true
+    const onReviewerPress = (userId) => {
+        console.log('visiting profile')
+        navigation.push('Profile-Other', {
+            id: userId,
+            other: true, 
         })
     }
     return (
         <ScrollView style={styles.root}>
-            <RatingModal modalVisible={rating} onPress={() => setRating(false)} />
+            <RatingModal modalVisible={rating} onPress={() => setRating(false)} userId={id} />
             <View style={styles.header}>
                 <View style={[styles.div, { height: 0.3 * height }]}>
                     {imageURL && <ProfilePic source={{ uri: imageURL }} radius={180} style={[styles.img, { marginTop: .5 * .3 * height }]} />
@@ -195,17 +226,17 @@ const Profile = ({ navigation, route }) => {
                     <Text style={styles.text}>   {user.mobileNumber}</Text>
                 </View>
             </View>
-            {/* <View style={styles.contactInfo}>
+            <View style={styles.contactInfo}>
                 <CustomHeader text={'Reviews'} size={17} />
-                {user.reviews.length == 0 && <Text style={styles.text}>No Reviews</Text>}
-                {user.reviews.map((review) => {
+                {!user.comments || user.comments.length == 0 && <Text style={styles.text}>No Reviews</Text>}
+                {user.comments && user.comments.map((review) => {
                     return <CommentCard
                         key={review.id}
-                        name={review.reviewer}
+                        name={review.username}
                         comment={review.comment}
-                        onReviewerPress = {onReviewerPress} />
+                        onReviewerPress={() => onReviewerPress(review.userId)} />
                 })}
-            </View> */}
+            </View>
         </ScrollView>
     )
 }

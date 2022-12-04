@@ -9,11 +9,15 @@ import CustomButton from '../../components/CustomButton'
 import axios from 'axios'
 import API_URL from '../../App_URL'
 import * as SecureStore from 'expo-secure-store'
+import SucceedModal from '../../components/Modals/succeed-modal'
+import FailedModal from '../../components/Modals/failed-modal'
 
 const PublishNumber = ({ navigation, route }) => {
     const [number, setNumber] = useState(3)
     const [instant, setInstant] = useState(false)
     const [modalVisible, setModalVisible] = useState(false);
+    const [errorModal, setErrorModal] = useState(false)
+
     const onPress = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
         let data = {
@@ -33,11 +37,11 @@ const PublishNumber = ({ navigation, route }) => {
             noChildren: route.params.noChildren,
             girlsOnly: route.params.girlsOnly
         }
-        axios.post(`${API_URL}/ride/publish`, data , {
+        axios.post(`${API_URL}/ride/publish`, data, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
-          }).then((res) => {
+        }).then((res) => {
             console.log(res.data)
             if (res.status === 201) {
                 setModalVisible(true)
@@ -45,7 +49,11 @@ const PublishNumber = ({ navigation, route }) => {
             }
 
         }).catch((err) => {
-            console.log(err)
+            if (err.response.status == 403) {
+                console.log('oops')
+                setErrorModal(true)
+            }
+
         })
     }
     const increase = () => {
@@ -70,22 +78,30 @@ const PublishNumber = ({ navigation, route }) => {
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>Your Ride Was Published Successfully</Text>
                         <View style={styles.modalButtons}>
-                           <CustomButton 
-                           style={styles.button} 
-                           text={'OK'} 
-                           width={'30%'} 
-                           onPress = {
-                            () => {
-                                setModalVisible(false)
-                                navigation.navigate('Publish-Source')
-                            }
-                           }
-                        />
+                            <CustomButton
+                                style={styles.button}
+                                text={'OK'}
+                                width={'30%'}
+                                onPress={
+                                    () => {
+                                        setModalVisible(false)
+                                        navigation.navigate('Publish-Source')
+                                    }
+                                }
+                            />
                         </View>
 
                     </View>
                 </View>
             </Modal>
+            <FailedModal
+                modalVisible={errorModal}
+                setModalVisible={setErrorModal}
+                onPress={() => {
+                    setErrorModal(false);
+                }}
+                message={'You have a ride at this time.'}
+            />
             <CustomHeader text={'Ride Properties'} />
             <View>
                 <CustomHeader
@@ -214,14 +230,14 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontFamily: 'kanyon-bold'
     },
-    modalButtons:{
-        width:'100%', 
-        flexDirection: 'row', 
-        justifyContent: 'center',  
-        alignItems: 'center', 
+    modalButtons: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginTop: '10%'
-    }, 
-    button:{
+    },
+    button: {
         width: '20%'
     }
 

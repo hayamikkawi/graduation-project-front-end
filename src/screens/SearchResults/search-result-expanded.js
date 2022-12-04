@@ -14,44 +14,50 @@ import { Buffer } from "buffer";
 const SearchResultExpanded = ({ route, navigation }) => {
     const [ride, setRide] = useState(route.params.ride)
     const numberOfPassengersToReserve = route.params.numberOfPassengers
-    const [numberOfSeats, setNumberOfSeats] = useState(ride.rideProperty.numberOfAvailableSeats)
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalFailVisible, setModalFailVisible] = useState(false);
+    const [numberOfSeats, setNumberOfSeats] = useState(ride.rideProperty ? ride.rideProperty.numberOfAvailableSeats : 0)
+    const [modalVisible, setModalVisible] = useState(false)
+    const [modalDeleteVisible, setModalDeleteVisible] = useState(false)
+    const [modalFailVisible, setModalFailVisible] = useState(false)
     const [buttonDisabled, setButtonDisabled] = useState(false)
+    const asPassenger = route.params.asPassenger
+    const asDriver = route.params.asDriver
     const passengers = ride.passengers
-    var imageURL = ''
-    const b = new Buffer.from(ride.user.profilePicture, 'binary').toString('base64')
-    imageURL = 'data:image/jpeg;base64,' + b
+   // const passengers = []
+    if (!asDriver) {
+        var imageURL = ''
+        const b = new Buffer.from(ride.user.profilePicture, 'binary').toString('base64')
+        imageURL = 'data:image/jpeg;base64,' + b
+    }
     const properties_names = {
         'middleSeatEmpty': 'Only two passengers in the back seat',
         'noSmoking': 'Smoking not allowed', 'girlsOnly': 'Girls only', 'disabled': 'Disabled seat available',
         'noPets': 'Pets not allowed', 'noChildren': 'Children not allowed', 'AC': 'Air Conditioner'
     }
-    console.log(ride)
 
     const onReservePressed = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
         console.log('reserve')
         axios.post(`${API_URL}/ride/reserve`, {
-            rideId: ride.rideProperty.rideId, 
-            numberOfPassengers: numberOfPassengersToReserve 
+            rideId: ride.rideProperty.rideId,
+            numberOfPassengers: numberOfPassengersToReserve
         }, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
         }).then((res) => {
-            console.log('result' + res.data)
+            // console.log('result' + res.data)
             if (res.status == 200) {
                 setNumberOfSeats(numberOfSeats - numberOfPassengersToReserve)
                 setModalVisible(true)
-               // navigation.navigate('Search1')
+                // navigation.navigate('Search1')
 
-            } 
+            }
         }).catch((err) => {
             setModalFailVisible(true)
         })
     }
     const onVisitPressed = () => {
+        console.log(ride.user.id)
         navigation.navigate('Profile-Main', {
             id: ride.user.id,
             other: true
@@ -60,8 +66,33 @@ const SearchResultExpanded = ({ route, navigation }) => {
     const onPassengerPress = (userId) => {
         console.log(userId)
         navigation.navigate('Profile-Main', {
-            id: userId, 
+            id: userId,
             other: true
+        })
+    }
+    const onDeleteRide = async () => {
+        const token = await SecureStore.getItemAsync('secureToken')
+        console.log(token)
+        axios.delete(`${API_URL}/ride/delete/${ride.id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then((res) => {
+            setModalDeleteVisible(true)
+        }).catch((err) => {
+            console.lor(err)
+        })
+    }
+    const onCancelReservation = async () => {
+        const token = await SecureStore.getItemAsync('secureToken')
+        axios.delete(`${API_URL}/ride/delete/${ride.id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        }).then((res) => {
+            setModalDeleteVisible(true)
+        }).catch((err) => {
+            console.log(err)
         })
     }
     return (
@@ -82,24 +113,39 @@ const SearchResultExpanded = ({ route, navigation }) => {
                 }}
                 message={'Your already reserved in this ride'}
             />
+            <SucceedModal modalVisible={modalDeleteVisible}
+                setModalVisible={setModalDeleteVisible}
+                onPress={() => {
+                    setModalDeleteVisible(false)
+                }}
+                message={asDriver ? ('Your ride was deleted successfully.') : ('You reservation was cancelled successfully.')}
+            />
             <View style={styles.container}>
                 <View style={styles.view}>
                     <CustomHeader text={'Ride info'} size={25} />
-                    <SearchResultCardInner ride={ride} nextIcon={false} withDriver={false} navigation={navigation} />
+                    <SearchResultCardInner
+                        ride={ride}
+                        nextIcon={false}
+                        withDriver={false}
+                        navigation={navigation}
+                        asDriver={asDriver}
+                        asPassenger={asPassenger}
+                    />
                 </View>
-                <View style={styles.view}>
+                {!asDriver && <View style={styles.view}>
                     <CustomHeader text={'Driver info'} size={25} />
                     <View style={styles.driverContainer}>
                         <ProfilePic source={{ uri: imageURL }} radius={60} />
                         <Text style={styles.text}>{ride.user && ride.user.username}</Text>
                         <CustomButton text={'Visit'} width={'30%'} onPress={onVisitPressed} />
                     </View>
-                </View>
+                </View>}
+
                 <View style={styles.view}>
                     <CustomHeader text={'Passengers'} size={25} />
-                    {passengers.map((pass) => {
+                    {passengers && passengers.map((pass) => {
                         return (
-                            <Pressable style={styles.driverContainer} key={pass.userId} onPress={()=>onPassengerPress(pass.userId)}>
+                            <Pressable style={styles.driverContainer} key={pass.userId} onPress={() => onPassengerPress(pass.userId)}>
                                 <Text style={styles.text}>{pass.name}</Text>
                                 <Ionicons name='caret-forward' color={'#1093c9'} size={25} />
                             </Pressable>
@@ -134,9 +180,19 @@ const SearchResultExpanded = ({ route, navigation }) => {
                     </View>
 
                 </View>
-                <View>
+                {
+                    asDriver && <View>
+                        <CustomButton text={'Delete This Ride'} onPress={onDeleteRide} bgcolor={'#d11a2a'} />
+                    </View>
+                }
+                {
+                    asPassenger && <View>
+                        <CustomButton text={'Cancel My Reservation'} onPress={onCancelReservation} bgcolor={'#d11a2a'} />
+                    </View>
+                }
+                {(!asPassenger && !asDriver) && <View>
                     <CustomButton text={'Reserve Now'} onPress={onReservePressed} disabled={buttonDisabled} />
-                </View>
+                </View>}
             </View>
         </ScrollView>
     )

@@ -1,4 +1,3 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import SearchPage from '../SearchScreen/search-page';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,6 +7,7 @@ import SearchResultExpanded from '../SearchResults/search-result-expanded';
 import Filtration from '../Filtration/filtration';
 import MapViewScreen from '../MapViewScreen/map-view-screen';
 import Profile from '../ProfileScreen/profile';
+import RouteMap from '../../components/MapSearch/route-map';
 
 const SearchScreenMain = () => {
   const Stack = createNativeStackNavigator();
@@ -50,6 +50,10 @@ const SearchScreenMain = () => {
       <Stack.Screen
       name='Profile-Main'
       component={Profile}
+      />
+      <Stack.Screen
+      name='RouteMap'
+      component={RouteMap}
       />
     </Stack.Navigator>
 

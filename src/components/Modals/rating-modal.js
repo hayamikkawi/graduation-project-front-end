@@ -8,14 +8,15 @@ import axios from 'axios'
 import API_URL from '../../App_URL'
 import * as SecureStore from 'expo-secure-store'
 
-const RatingModal = ({ modalVisible, onPress }) => {
+const RatingModal = ({ modalVisible, onPress, userId }) => {
     const [comment, setComment] = useState('')
     const [rating, setRating] = useState(0)
     const onOkPress = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
-        axios.post(`${API_URL}/user/rating`, {
+        console.log(userId)
+        axios.post(`${API_URL}/user/rating/${userId}`, {
             comment,
-            rating
+            rate: rating
         }, {
             headers: {
                 'Authorization': 'Bearer ' + token
