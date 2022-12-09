@@ -1,24 +1,26 @@
-import { StyleSheet} from 'react-native'
+import { StyleSheet } from 'react-native'
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import { GiftedChat, InputToolbar, Bubble, Send } from 'react-native-gifted-chat'
-import * as SecureStore from 'expo-secure-store'
 import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView'
 import socket from '../../../utils/socket'
 
 const ChatScreen = ({ navigation, route }) => {
-    const [sender] = useState(route.params.sender)
-    const [receiver] = useState(route.params.receiver)
+    const sender = route.params.sender
+    const receiver = route.params.receiver
+
     //new for socket: 
     const [chatMessages, setChatMessages] = useState([])
     useLayoutEffect(() => {
         navigation.setOptions({ title: receiver.name });
         const ids = {
-            senderId: sender._id, 
+            senderId: sender._id,
             receiverId: receiver._id
         }
         console.log(ids)
         socket.emit("findChat", ids);
-        socket.on("foundChat", (roomChats) => setChatMessages(roomChats));
+        socket.on("foundChat", (roomChats) => {
+            setChatMessages(roomChats)
+        });
     }, []);
 
     // useEffect(() => {
@@ -65,22 +67,23 @@ const ChatScreen = ({ navigation, route }) => {
             new Date().getHours() < 10
                 ? `0${new Date().getHours()}`
                 : `${new Date().getHours()}`;
-    
+
         const mins =
             new Date().getMinutes() < 10
                 ? `0${new Date().getMinutes()}`
                 : `${new Date().getMinutes()}`;
-    
-        socket.emit("newMessage", {
-            text: messages,
-            from:{
+        const newMessage = {
+            text: messages[0].text,
+            from: {
                 _id: sender._id
             },
             to: {
                 _id: receiver._id
-            }, 
+            },
             createdAt: { hour, mins }
-        });
+        }
+        console.log(newMessage)
+        socket.emit("newMessage", newMessage);
     };
 
     const onSend = useCallback((messages = []) => {
@@ -128,7 +131,7 @@ const ChatScreen = ({ navigation, route }) => {
             <GiftedChat
                 messages={chatMessages}
                 onSend={messages => onSend(messages)}
-                user={sender}
+                user={{ _id: route.params.sender._id }}
                 renderInputToolbar={renderInputToolbar}
                 renderBubble={renderBubble}
                 renderSend={renderSend}

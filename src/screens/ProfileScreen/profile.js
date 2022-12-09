@@ -13,6 +13,7 @@ import RatingModal from '../../components/Modals/rating-modal'
 import { Buffer } from "buffer";
 import { useFocusEffect } from '@react-navigation/native';
 import CommentCard from '../../components/Cards/comment-card.js'
+import { Avatar } from 'react-native-gifted-chat'
 
 const Profile = ({ navigation, route }) => {
     const [id, setId] = useState(route.params.id)
@@ -129,8 +130,11 @@ const Profile = ({ navigation, route }) => {
         })
     }
     const onLogoutPress = async () => {
+        const expoToken = await SecureStore.getItemAsync('expoToken')
         const token = await SecureStore.getItemAsync('secureToken')
-        axios.post(`${API_URL}/me/logout`, {}, {
+        axios.post(`${API_URL}/me/logout`, {
+            pushToken: expoToken
+        }, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
@@ -146,13 +150,21 @@ const Profile = ({ navigation, route }) => {
             console.log(err)
         })
     }
-    const onContactPress = () => {
-        navigation.navigate('Chat Screen', {
-            receiver:  {
-                _id: id,
-                name: user.username,
-                profilePicture: null
-              }
+    const onContactPress = async () => {
+        const sender = await SecureStore.getItemAsync('user')
+        const senderJson = await JSON.parse(sender)
+        const receiver = {
+            _id: id,
+            name: user.username,
+            profilePicture: Avatar
+        }
+        const sender2 = {
+            _id: senderJson.id,
+            name: senderJson.username
+        }
+        navigation.navigate('Chat-Screen', {
+            receiver,
+            sender: sender2
         })
     }
     const onRatePress = () => {
@@ -162,7 +174,7 @@ const Profile = ({ navigation, route }) => {
         console.log('visiting profile')
         navigation.push('Profile-Other', {
             id: userId,
-            other: true, 
+            other: true,
         })
     }
     return (
@@ -229,9 +241,9 @@ const Profile = ({ navigation, route }) => {
             <View style={styles.contactInfo}>
                 <CustomHeader text={'Reviews'} size={17} />
                 {!user.comments || user.comments.length == 0 && <Text style={styles.text}>No Reviews</Text>}
-                {user.comments && user.comments.map((review) => {
+                {user.comments && user.comments.map((review, index) => {
                     return <CommentCard
-                        key={review.id}
+                        key={index}
                         name={review.username}
                         comment={review.comment}
                         onReviewerPress={() => onReviewerPress(review.userId)} />

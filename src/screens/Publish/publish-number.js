@@ -35,8 +35,10 @@ const PublishNumber = ({ navigation, route }) => {
             noPets: route.params.noPets,
             seatForDisabled: route.params.disabled,
             noChildren: route.params.noChildren,
-            girlsOnly: route.params.girlsOnly
+            girlsOnly: route.params.girlsOnly, 
+            route: route.params.selectedRoute
         }
+        console.log(data)
         axios.post(`${API_URL}/ride/publish`, data, {
             headers: {
                 'Authorization': 'Bearer ' + token

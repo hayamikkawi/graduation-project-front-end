@@ -17,7 +17,7 @@ const SignUpScreen2 = ({ navigation, route }) => {
     const [dateOfBirth, setDateOfBirth] = useState(new Date())
     const [expoPushToken, setExpoPushToken] = useState()
 
-    registerForPushNotificationsAsync = async () => {
+    const registerForPushNotificationsAsync = async () => {
         if (Device.isDevice) {
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
             let finalStatus = existingStatus;
@@ -30,7 +30,7 @@ const SignUpScreen2 = ({ navigation, route }) => {
                 return;
             }
             const token = (await Notifications.getExpoPushTokenAsync()).data;
-            console.log(token);
+            ///console.log(token);
             setExpoPushToken(token)
             await SecureStore.setItemAsync('expoToken', token)
         } else {
@@ -60,11 +60,13 @@ const SignUpScreen2 = ({ navigation, route }) => {
             email: route.params.email,
             mobileNumber: route.params.mobileNumber,
             gender: gender,
-            dateOfBirth: dateOfBirth
+            dateOfBirth: dateOfBirth, 
+            pushToken: expoPushToken
         })
     }
     const onSignupPressed = async () => {
         await registerForPushNotificationsAsync()
+        const expoToken = await SecureStore.getItemAsync('expoToken')
         axios.post(`${API_URL}/users/signup`, {
             username: route.params.username,
             password: route.params.password,
@@ -73,7 +75,7 @@ const SignUpScreen2 = ({ navigation, route }) => {
             role: "user",
             gender: gender,
             dateOfBirth: dateOfBirth, 
-            pushToken: expoPushToken
+            pushToken: expoToken
         }).then(async (res) => {
             if (res.status !== 201) {
                 console.log(res.data.message)

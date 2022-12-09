@@ -22,7 +22,7 @@ const SignInScreen = ({ navigation }) => {
     let isValidated = true
     const { height } = useWindowDimensions()
 
-    registerForPushNotificationsAsync = async () => {
+    const registerForPushNotificationsAsync = async () => {
         if (Device.isDevice) {
           const { status: existingStatus } = await Notifications.getPermissionsAsync();
           let finalStatus = existingStatus;
@@ -35,7 +35,6 @@ const SignInScreen = ({ navigation }) => {
             return;
           }
           const token = (await Notifications.getExpoPushTokenAsync()).data;
-          console.log(token);
           setExpoPushToken(token)
           await SecureStore.setItemAsync('expoToken', token)
         } else {
@@ -71,10 +70,12 @@ const SignInScreen = ({ navigation }) => {
             return
         }
         await registerForPushNotificationsAsync()
+        const expoToken = await SecureStore.getItemAsync('expoToken')
+        console.log(expoToken)
         const payload = {
             username,
             password,
-            pushToken: expoPushToken
+            pushToken: expoToken
         };
         fetch(`${API_URL}/users/login`, {
             method: 'POST',

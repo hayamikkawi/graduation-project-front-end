@@ -114,6 +114,7 @@ const SignUpDriver = ({ route, navigation }) => {
     validate()
     if (!isValid) return
     await registerForPushNotificationsAsync()
+    const expoToken = await SecureStore.getItemAsync('expoToken')
     axios.post(`${API_URL}/users/signup`, {
       username: route.params.username,
       password: route.params.password,
@@ -122,7 +123,7 @@ const SignUpDriver = ({ route, navigation }) => {
       role: "driver",
       gender: route.params.gender,
       dateOfBirth: route.params.dateOfBirth, 
-      pushToken: expoPushToken
+      pushToken: expoToken
     }).then(async (res) => {
       if (res.status !== 201) {
         console.log(res.data)
@@ -220,7 +221,7 @@ const SignUpDriver = ({ route, navigation }) => {
             message='You became a driver'
             onPress={() => {
               setSuccess(false)
-              navigation.navigate('Profile-Main')
+              navigation.navigate('Publish-Source')
             }}
           />
           <View style={styles.customContainer}>

@@ -3,28 +3,32 @@ import ProfilePic from '../ProfilePicture/profile-pic'
 import React from 'react'
 import * as SecureStore from 'expo-secure-store'
 
-const ChatCard = ({ chat, navigattion }) => {
-    const onChatPressed = async() => {
+const ChatCard = ({ chat, navigation }) => {
+    const onChatPressed = async () => {
         const sender = await SecureStore.getItemAsync('user')
         const senderJson = await JSON.parse(sender)
-        navigattion.navigate('Chat Screen', {
-            receiver: chat.chatter, 
+        navigation.navigate('Chat Screen', {
+            receiver: {
+                _id: chat.chatter.id,
+                name: chat.chatter.username,
+                profilePicture: null
+            }, 
             sender: {
                 _id: senderJson.id,
-                name: senderJson.username
+                //name: senderJson.username
             }
         })
     }
     return (
         <Pressable style={styles.container} onPress={onChatPressed}>
-            <ProfilePic source={chat.chatter.profilePicture} radius={60} />
+            {/* <ProfilePic source={chat.chatter.profilePicture} radius={60} /> */}
             <View style={styles.innerContainer}>
                 <View style={styles.rowFlex}>
-                    <Text style={styles.boldText}>{chat.chatter.name}</Text>
-                    <Text style={styles.text}>{chat.lastMessage.date}</Text>
+                    <Text style={styles.boldText}>{chat.chatter.username}</Text>
+                    {/* <Text style={styles.text}>{chat.lastMessage.date}</Text> */}
                 </View>
                 <View>
-                    <Text style={[styles.text, { paddingTop: '3%' }]}>{chat.lastMessage.message}</Text>
+                    {/* <Text style={[styles.text, { paddingTop: '3%' }]}>{chat.lastMessage.message}</Text> */}
                 </View>
             </View>
         </Pressable>

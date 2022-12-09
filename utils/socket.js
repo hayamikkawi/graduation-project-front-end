@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
-import API_URL from "../src/App_URL";
-const socket = io.connect(`${API_URL}`);
+import Socket_URL from "../src/Socket_URL"; 
+
+const socket = io.connect(`${Socket_URL}`);
 export default socket;

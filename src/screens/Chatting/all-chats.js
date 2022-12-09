@@ -5,41 +5,36 @@ import ChatCard from '../../components/Cards/chat-card'
 import CustomHeader from '../../components/Header/header'
 import API_URL from '../../App_URL'
 import socket from '../../../utils/socket'
+import axios from 'axios'
+import * as SecureStore from 'expo-secure-store'
 
 const AllChatsScreen = ({ navigation }) => {
   const allChats = [
-    {
-      id: 1,
-      chatter: {
-        _id: 3,
-        name: 'Mostafa',
-        profilePicture: Avatar
-      }, 
-      lastMessage:{
-        message: 'Hello', 
-        date: '22/10/2020'
-      }
-    },
     {
       id: 2,
       chatter: {
         _id: 10,
         name: 'Danah',
         profilePicture: Avatar
-      }, 
-      lastMessage:{
-        message: 'hii', 
+      },
+      lastMessage: {
+        message: 'hii',
         date: '22/9/2020'
       }
     }
   ]
   const [rooms, setRooms] = useState([])
   useLayoutEffect(() => {
-    function fetchGroups() {
-      fetch(`${API_URL}/chats`)
-        .then((res) => res.json())
-        .then((data) => setRooms(data))
-        .catch((err) => console.error(err));
+    async function fetchGroups() {
+      const userString = await SecureStore.getItemAsync('user')
+      const user = JSON.parse(userString)
+      console.log(`${API_URL}/chats/${user.id}`)
+      axios.get(`${API_URL}/chats/${user.id}`).then((res) => {
+        //console.log(res.data)
+        setRooms(res.data)
+      }).catch((err) => {
+        console.log("here"+err)
+      })
     }
     fetchGroups();
   }, []);
@@ -54,11 +49,11 @@ const AllChatsScreen = ({ navigation }) => {
     <ScrollView style={styles.root}>
       <CustomHeader text={'Chats'} size={25} />
       {
-        allChats.map((chat) => {
+        rooms.map((chat, index) => {
           return <ChatCard
             chat={chat}
-            key={chat.id}
-            navigattion={navigation}
+            key={index}
+            navigation={navigation}
           />
         }
         )

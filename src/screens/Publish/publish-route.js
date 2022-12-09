@@ -17,8 +17,6 @@ const PublishRoute = ({ navigation, route }) => {
   const myCoordinates = [route.params.sourceLatLong, route.params.destLatLong]
   console.log(myCoordinates)
   const [coordinates] = useState(myCoordinates);
-  const [routes, setRoutes] = useState([])
-  const [coords, setCoords] = useState([])
   const [ways, setWays] = useState([])
   // useFocusEffect(
   //   React.useCallback(() => {
@@ -52,8 +50,9 @@ const PublishRoute = ({ navigation, route }) => {
       `destination=${coordinates[1].latitude},${coordinates[1].longitude}&mode=driving&alternatives=true&key=AIzaSyAieM8IXCWExPZ6-GgqxcGtwq4zW_dfFd4`).then(
         (res) => {
           res.data.routes.forEach(route => {
-            //setRoutes(current => [...current, route.summary])
+            let pointsEncoded = route.overview_polyline.points
             let points = Polyline.decode(route.overview_polyline.points);
+            // console.log(pointsEncoded)
             let newCoords = points.map((point, index) => {
               return {
                 latitude: point[0],
@@ -61,6 +60,7 @@ const PublishRoute = ({ navigation, route }) => {
               }
             })
             const way = {
+              points: pointsEncoded,
               coords: newCoords,
               name: route.summary,
               isSelected: false
@@ -87,12 +87,15 @@ const PublishRoute = ({ navigation, route }) => {
     )
   }
   const getSelectedRoute = () => {
+    let selectedRoute = {}
     ways.forEach(way => {
-      if(way.isSelected) return {coords: way.coords, name: way.name}
+      if(way.isSelected) selectedRoute = way.points
     });
+    return selectedRoute
   }
   const onNextPressed = () => {
     const selectedRoute = getSelectedRoute()
+    console.log(selectedRoute)
     navigation.navigate('Publish-Date-Details', {
       sourceDescription: route.params.sourceDescription,
       sourceId: route.params.sourceId,
@@ -108,8 +111,8 @@ const PublishRoute = ({ navigation, route }) => {
         initialRegion={{
           latitude: coordinates[0].latitude,
           longitude: coordinates[0].longitude,
-          latitudeDelta: 0.1622,
-          longitudeDelta: 0.1121,
+          latitudeDelta: 0.5,
+          longitudeDelta: 0.5,
         }}
       >
         {

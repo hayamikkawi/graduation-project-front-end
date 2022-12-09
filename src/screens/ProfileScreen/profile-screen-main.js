@@ -5,6 +5,7 @@ import ProfileEdit from './profile-edit'
 import ProfileVerify from './profile-verify'
 import PasswordChange from './profile-password-change'
 import SignUpDriver from '../SignUpDriverScreen/sign-up-driver'
+import ChatScreen from '../Chatting/chat-screen'
 
 const ProfileScreenMain = ({route}) => {
     const ProfileStack = createNativeStackNavigator()
@@ -42,6 +43,10 @@ const ProfileScreenMain = ({route}) => {
             <ProfileStack.Screen
                 name='Profile-Other'
                 component={Profile}
+            />
+            <ProfileStack.Screen
+                name='Chat-Screen'
+                component={ChatScreen}
             />
         </ProfileStack.Navigator>
     )
