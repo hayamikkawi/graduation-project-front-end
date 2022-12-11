@@ -8,6 +8,7 @@ import Filtration from '../Filtration/filtration';
 import MapViewScreen from '../MapViewScreen/map-view-screen';
 import Profile from '../ProfileScreen/profile';
 import RouteMap from '../../components/MapSearch/route-map';
+import ChatScreen from '../Chatting/chat-screen';
 
 const SearchScreenMain = () => {
   const Stack = createNativeStackNavigator();
@@ -15,7 +16,7 @@ const SearchScreenMain = () => {
     <Stack.Navigator
       screenOptions={
         {
-          title : '',
+          title: '',
           headerTintColor: 'white',
           headerStyle: {
             backgroundColor: '#262a2d'
@@ -48,12 +49,16 @@ const SearchScreenMain = () => {
         component={MapViewScreen}
       />
       <Stack.Screen
-      name='Profile-Main'
-      component={Profile}
+        name='Profile-Main'
+        component={Profile}
       />
       <Stack.Screen
-      name='RouteMap'
-      component={RouteMap}
+        name='RouteMap'
+        component={RouteMap}
+      />
+      <Stack.Screen
+        name='Chat-Screen'
+        component={ChatScreen}
       />
     </Stack.Navigator>
 

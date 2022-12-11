@@ -23,6 +23,8 @@ const SearchResultExpanded = ({ route, navigation }) => {
     const asDriver = route.params.asDriver
     const passengers = ride.passengers
    // const passengers = []
+   console.log('ride is:')
+   console.log(ride.passengers)
     if (!asDriver) {
         var imageURL = ''
         const b = new Buffer.from(ride.user.profilePicture, 'binary').toString('base64')

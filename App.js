@@ -11,6 +11,7 @@ import SignUpDriver from './src/screens/SignUpDriverScreen/sign-up-driver.js';
 import *   as SecureStore from 'expo-secure-store'
 import { useState, useEffect, useReducer } from 'react'
 import SignUpScreen2 from './src/screens/SignUpScreen/sign-up-second.js';
+import PublishSource from './src/screens/Publish/publish-source.js';
 
 export default function App() {
   const [isSigned, setIsSigned] = useState(false)
@@ -81,6 +82,10 @@ export default function App() {
             name="Home"
             component={HomeScreen}
             initialParams={{setIsSigned: setIsSigned}}
+          />
+          <Stack.Screen
+            name='Publish-Source'
+            component={PublishSource}
           />
         </Stack.Navigator>
       </NavigationContainer>

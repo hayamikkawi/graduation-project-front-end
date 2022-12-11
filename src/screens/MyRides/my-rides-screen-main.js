@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import SearchResultExpanded from '../SearchResults/search-result-expanded'
 import Profile from '../ProfileScreen/profile'
 import MapViewScreen from '../MapViewScreen/map-view-screen'
+import RouteMap from '../../components/MapSearch/route-map'
+import ChatScreen from '../Chatting/chat-screen'
 
 const MyRidesScreenMain = () => {
     const RidesStack = createNativeStackNavigator()
@@ -36,6 +38,14 @@ const MyRidesScreenMain = () => {
             <RidesStack.Screen
                 name='SearchMap'
                 component={MapViewScreen}
+            />
+            <RidesStack.Screen
+                name='RouteMap'
+                component={RouteMap}
+            />
+            <RidesStack.Screen
+                name='Chat-Screen'
+                component={ChatScreen}
             />
         </RidesStack.Navigator>
     )

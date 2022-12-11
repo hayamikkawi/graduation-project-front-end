@@ -7,6 +7,7 @@ import API_URL from '../../App_URL'
 import socket from '../../../utils/socket'
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
+import { useFocusEffect } from '@react-navigation/native'
 
 const AllChatsScreen = ({ navigation }) => {
   const allChats = [
@@ -24,7 +25,8 @@ const AllChatsScreen = ({ navigation }) => {
     }
   ]
   const [rooms, setRooms] = useState([])
-  useLayoutEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
     async function fetchGroups() {
       const userString = await SecureStore.getItemAsync('user')
       const user = JSON.parse(userString)
@@ -37,7 +39,8 @@ const AllChatsScreen = ({ navigation }) => {
       })
     }
     fetchGroups();
-  }, []);
+  }, [])
+  );
 
   useEffect(() => {
     socket.on("chatsList", (rooms) => {

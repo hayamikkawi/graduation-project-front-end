@@ -2,8 +2,23 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 import ProfilePic from '../ProfilePicture/profile-pic'
 import React from 'react'
 import * as SecureStore from 'expo-secure-store'
+import { useState, useEffect } from 'react'
+import { Buffer } from "buffer";
 
 const ChatCard = ({ chat, navigation }) => {
+    const [imageURL, setImageURL] = useState('')
+    useEffect(() => {
+        const getProfilePicture = async () => {
+            try {
+                const b = new Buffer.from(chat.chatter.profilePicture.data, 'binary').toString('base64')
+                setImageURL('data:image/jpeg;base64,' + b)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+         getProfilePicture()
+    }, [])
+
     const onChatPressed = async () => {
         const sender = await SecureStore.getItemAsync('user')
         const senderJson = await JSON.parse(sender)
@@ -12,7 +27,7 @@ const ChatCard = ({ chat, navigation }) => {
                 _id: chat.chatter.id,
                 name: chat.chatter.username,
                 profilePicture: null
-            }, 
+            },
             sender: {
                 _id: senderJson.id,
                 //name: senderJson.username
@@ -21,14 +36,14 @@ const ChatCard = ({ chat, navigation }) => {
     }
     return (
         <Pressable style={styles.container} onPress={onChatPressed}>
-            {/* <ProfilePic source={chat.chatter.profilePicture} radius={60} /> */}
+            <ProfilePic source={{ uri: imageURL }} radius={60} />
             <View style={styles.innerContainer}>
                 <View style={styles.rowFlex}>
                     <Text style={styles.boldText}>{chat.chatter.username}</Text>
-                    {/* <Text style={styles.text}>{chat.lastMessage.date}</Text> */}
+                    <Text style={styles.text}>{chat.lastMessage.createdAt}</Text>
                 </View>
                 <View>
-                    {/* <Text style={[styles.text, { paddingTop: '3%' }]}>{chat.lastMessage.message}</Text> */}
+                    <Text style={[styles.text, { paddingTop: '3%' }]}>{chat.lastMessage.text}</Text>
                 </View>
             </View>
         </Pressable>

@@ -82,7 +82,7 @@ const ChatScreen = ({ navigation, route }) => {
             },
             createdAt: { hour, mins }
         }
-        console.log(newMessage)
+        // console.log(newMessage)
         socket.emit("newMessage", newMessage);
     };
 
