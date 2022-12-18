@@ -6,7 +6,7 @@ import { useWindowDimensions } from 'react-native'
 import ProfilePic from '../../components/ProfilePicture/profile-pic'
 import CustomHeader from '../../components/Header/header'
 import CustomButton from '../../components/CustomButton'
-import { Rating, AirbnbRating } from 'react-native-ratings'
+import { AirbnbRating } from 'react-native-ratings'
 import * as SecureStore from 'expo-secure-store'
 import API_URL from '../../App_URL'
 import RatingModal from '../../components/Modals/rating-modal'
@@ -14,10 +14,12 @@ import { Buffer } from "buffer";
 import { useFocusEffect } from '@react-navigation/native';
 import CommentCard from '../../components/Cards/comment-card.js'
 import { Avatar } from 'react-native-gifted-chat'
+import ReportModal from '../../components/Modals/report-modal'
 
 const Profile = ({ navigation, route }) => {
     const [id, setId] = useState(route.params.id)
     const [rating, setRating] = useState(false)
+    const [report, setReport] = useState(false)
     const [role, setRole] = useState('')
     const { other } = route.params
     const { height } = useWindowDimensions()
@@ -177,8 +179,12 @@ const Profile = ({ navigation, route }) => {
             other: true,
         })
     }
+    const onReportPress = () => {
+        setReport(true)
+    }
     return (
         <ScrollView style={styles.root}>
+            <ReportModal modalVisible={report} onPress={() => setReport(false)} userId={id} />
             <RatingModal modalVisible={rating} onPress={() => setRating(false)} userId={id} />
             <View style={styles.header}>
                 <View style={[styles.div, { height: 0.3 * height }]}>
@@ -204,8 +210,9 @@ const Profile = ({ navigation, route }) => {
                         </View>
                         {other ?
                             <View style={styles.flex}>
-                                <CustomButton width='35%' text={'Contact'} onPress={onContactPress} />
-                                <CustomButton width='35%' text={'Rate'} onPress={onRatePress} />
+                                <CustomButton width='30%' text={'Contact'} onPress={onContactPress} />
+                                <CustomButton width='25%' text={'Rate'} onPress={onRatePress} />
+                                <CustomButton width='25%' text={'Report'} onPress={onReportPress} />
                             </View> : <View style={styles.flex}>
                                 <CustomButton width='20%' icon={'build'} onPress={onEditPress} />
                                 {(user.phoneVerified == true && user.emailVerified == true) ?

@@ -78,7 +78,9 @@ const styles = StyleSheet.create({
     },
     textInput: {
         width: '100%',
-        borderRadius: '5%'
+        borderRadius: '5%', 
+        // height: 'fit-content'
+        // maxHeight:'fit-content'
     }
 })
 module.exports = styles
