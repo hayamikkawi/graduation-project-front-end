@@ -13,6 +13,8 @@ const ReportModal = ({ modalVisible, onPress, userId, token }) => {
     const onOkPress = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
         axios.post(`${API_URL}/users/report/${userId}`, {
+            reportMessage: report
+        }, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
@@ -21,9 +23,8 @@ const ReportModal = ({ modalVisible, onPress, userId, token }) => {
                 onPress()
             }
         }).catch((err) => {
-
+            console.log(err)
         })
-        console.log('report')
     }
     return (
         <View>

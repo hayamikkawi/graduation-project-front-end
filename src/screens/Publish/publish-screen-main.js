@@ -11,16 +11,24 @@ import UnauthorizedDriver from '../Unauthorized/unauthorized-driver'
 import * as SecureStore from 'expo-secure-store'
 import SignUpDriver from '../SignUpDriverScreen/sign-up-driver'
 import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios'
+import API_URL from '../../App_URL'
 
 const PublishScreenMain = () => {
     const Stack = createNativeStackNavigator()
     const [role, setRole] = useState('')
     useFocusEffect(React.useCallback(() => {
         async function fetchRole() {
-            const userString = await SecureStore.getItemAsync('user')
-            const user = JSON.parse(userString)
-            console.log('role1: ' + user.role)
-            setRole(user.role)
+            const token = await SecureStore.getItemAsync('secureToken')
+            await axios.get(`${API_URL}/publish/role`, {
+                headers: {
+                    'Authorization': 'Bearer '+ token
+                }
+            }).then((res)=>{
+                console.log(res.data)
+                setRole(res.data)
+            })
+            // setRole(user.role)
         }
         fetchRole()
     }, [])
