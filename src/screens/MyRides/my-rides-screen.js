@@ -1,5 +1,5 @@
-import { View, ScrollView } from 'react-native'
-import React, {useState} from 'react'
+import { View } from 'react-native'
+import React from 'react'
 import styles from './rides-styles.js'
 import CustomHeader from '../../components/Header/header.js'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -7,8 +7,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import RidesAsPassenger from './rides-as-passenger.js';
 import RidesAsDriver from './rides-as-driver.js';
 import { useWindowDimensions } from 'react-native';
+import RidesRequest from './rides-requests.js';
 
-const MyRidesScreen = () => {
+const MyRidesScreen = ({navigation}) => {
   const RideTabs = createMaterialTopTabNavigator()
   const { height } = useWindowDimensions()
 
@@ -37,6 +38,14 @@ const MyRidesScreen = () => {
                     color={color}
                   />
                 );
+              } else if (route.name == 'Requests') {
+                return (
+                  <Ionicons
+                    name={'paper-plane'}
+                    size={size}
+                    color={color}
+                  />
+                )
               }
 
             },
@@ -55,6 +64,11 @@ const MyRidesScreen = () => {
           <RideTabs.Screen
             name={'As Driver'}
             component={RidesAsDriver}
+          />
+          <RideTabs.Screen
+            name={'Requests'}
+            component={RidesRequest}
+            navigation = {navigation}
           />
         </RideTabs.Navigator>
       </View>

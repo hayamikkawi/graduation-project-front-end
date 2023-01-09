@@ -47,7 +47,7 @@ const PublishRoute = ({ navigation, route }) => {
       console.log(`https://maps.googleapis.com/maps/api/directions/json?origin=${coordinates[0].latitude},${coordinates[0].longitude}&`+
       `destination=${coordinates[1].latitude},${coordinates[1].longitude}&mode=driving&alternatives=true&key=AIzaSyAieM8IXCWExPZ6-GgqxcGtwq4zW_dfFd4`)
       axios.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${coordinates[0].latitude},${coordinates[0].longitude}&`+
-      `destination=${coordinates[1].latitude},${coordinates[1].longitude}&mode=driving&alternatives=true&key=AIzaSyAieM8IXCWExPZ6-GgqxcGtwq4zW_dfFd4`).then(
+      `destination=${coordinates[1].latitude},${coordinates[1].longitude}&mode=driving&alternatives=true&key=${Google_Key}`).then(
         (res) => {
           res.data.routes.forEach(route => {
             let pointsEncoded = route.overview_polyline.points

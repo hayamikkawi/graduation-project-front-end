@@ -162,10 +162,10 @@ const SignUpDriver = ({ route, navigation }) => {
         uploadImage('driverLicense', token)
         uploadImage('carLicense', token)
         uploadImage('carInsurance', token)
-        const user = await SecureStore.getItemAsync('user')
-        const newUser = JSON.parse(user)
-        newUser.role = 'driver'
-        await SecureStore.setItemAsync('user', JSON.stringify(newUser))
+        // const user = await SecureStore.getItemAsync('user')
+        // const newUser = JSON.parse(user)
+        // newUser.role = 'driver'
+        // await SecureStore.setItemAsync('user', JSON.stringify(newUser))
         setSuccess(true)
       }
     }).catch((err) => {
@@ -218,10 +218,10 @@ const SignUpDriver = ({ route, navigation }) => {
           <SucceedModal
             modalVisible={success}
             setModalVisible={setSuccess}
-            message='You became a driver'
+            message='Your request to become a driver is sent!'
             onPress={() => {
               setSuccess(false)
-              navigation.navigate('Publish-Source')
+             // navigation.navigate('Publish-Source')
             }}
           />
           <View style={styles.customContainer}>

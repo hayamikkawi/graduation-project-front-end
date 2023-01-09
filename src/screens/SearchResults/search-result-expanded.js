@@ -33,7 +33,7 @@ const SearchResultExpanded = ({ route, navigation }) => {
     const properties_names = {
         'middleSeatEmpty': 'Only two passengers in the back seat',
         'noSmoking': 'Smoking not allowed', 'girlsOnly': 'Girls only', 'disabled': 'Disabled seat available',
-        'noPets': 'Pets not allowed', 'noChildren': 'Children not allowed', 'AC': 'Air Conditioner'
+        'noPets': 'Pets not allowed', 'noChildren': 'Children not allowed', 'AC': 'Air Conditioner', 'guysOnly':'Guys only'
     }
 
     const onReservePressed = async () => {
@@ -146,6 +146,7 @@ const SearchResultExpanded = ({ route, navigation }) => {
                 <View style={styles.view}>
                     <CustomHeader text={'Passengers'} size={25} />
                     {passengers && passengers.map((pass) => {
+                        if (pass.pending == 0)
                         return (
                             <Pressable style={styles.driverContainer} key={pass.userId} onPress={() => onPassengerPress(pass.userId)}>
                                 <Text style={styles.text}>{pass.name}</Text>
@@ -168,7 +169,7 @@ const SearchResultExpanded = ({ route, navigation }) => {
                 <View style={styles.view} >
                     <CustomHeader text={'Available Seats'} size={25} />
                     <View style={styles.centerContainer}>
-                        <Text style={[styles.text, { fontSize: 40 }]}>{numberOfSeats}</Text>
+                        <Text style={[styles.text, { fontSize: 40 }, {fontFamily: 'Arial'}]}>{numberOfSeats}</Text>
                     </View>
 
                 </View>

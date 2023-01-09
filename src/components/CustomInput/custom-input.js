@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     color: 'white',
     marginBottom: 10,
     fontSize: 17,
-    fontFamily: 'kanyon-medium', 
+    // fontFamily: 'kanyon-medium', 
+    fontFamily: 'Arial', 
     lineHeight: 17
   }
 })

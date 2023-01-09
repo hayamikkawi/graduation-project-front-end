@@ -9,6 +9,7 @@ import Ionicon from 'react-native-vector-icons/Ionicons'
 import * as Notifications from 'expo-notifications'
 import * as Device from 'expo-device'
 import axios from 'axios'
+import SuccessModal from '../../components/Modals/succeed-modal.js'
 
 const API_URL = require('../../App_URL')
 
@@ -19,35 +20,37 @@ const SignInScreen = ({ navigation }) => {
     const [isError, setIsError] = useState(false)
     const [error, setError] = useState('')
     const [valid, setValid] = useState(true)
+    const [success, setSuccess] = useState(false)
+
     let isValidated = true
     const { height } = useWindowDimensions()
 
     const registerForPushNotificationsAsync = async () => {
         if (Device.isDevice) {
-          const { status: existingStatus } = await Notifications.getPermissionsAsync();
-          let finalStatus = existingStatus;
-          if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-          }
-          if (finalStatus !== 'granted') {
-            alert('Failed to get push token for push notification!');
-            return;
-          }
-          const token = (await Notifications.getExpoPushTokenAsync()).data;
-          setExpoPushToken(token)
-          await SecureStore.setItemAsync('expoToken', token)
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            const token = (await Notifications.getExpoPushTokenAsync()).data;
+            setExpoPushToken(token)
+            await SecureStore.setItemAsync('expoToken', token)
         } else {
-          alert('Must use physical device for Push Notifications');
+            alert('Must use physical device for Push Notifications');
         }
-    
+
         if (Platform.OS === 'android') {
-          Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-          });
+            Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+            });
         }
     };
     const validate = () => {
@@ -63,7 +66,7 @@ const SignInScreen = ({ navigation }) => {
     const onLoggedIn = async (token) => {
         await SecureStore.setItemAsync('secureToken', token);
     }
-    const onLoginPressed = async() => {
+    const onLoginPressed = async () => {
         validate()
         if (!isValidated) {
             setError('Please Fill all Fields!')
@@ -90,8 +93,8 @@ const SignInScreen = ({ navigation }) => {
                         setIsError(true);
                         setError("Incorrect username or password");
                     } else {
-                        
                         const jsonRes = await res.json();
+                        console.log(res)
                         onLoggedIn(jsonRes.token);
                         setIsError(false);
                         setError(jsonRes.message);
@@ -112,12 +115,25 @@ const SignInScreen = ({ navigation }) => {
     }
     const onForgotPasswordPressed = () => {
         console.warn('forget')
+        const api_url = API_URL.split(':')
+        const url = api_url[0] + ':' + api_url[1] + ':3001'
+        axios.post(`${API_URL}/users/login/forgotMyPassword`, {
+            username,
+            url: `${API_URL}`
+        }).then((res) => {
+            setSuccess(true)
+        }).catch((err) => {
+            console.log(err)
+        })
     }
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ flex: 1 }}>
             <ScrollView style={styles.container}>
+                <SuccessModal modalVisible={success} message="An email was sent to reset your password" onPress={() => {
+                    setSuccess(false)
+                }} />
                 <View style={styles.root}>
                     <Image source={Transport} style={[styles.image, { height: height * 0.6 }]} resizeMode="contain" />
                     <View style={styles.loginContainer}>

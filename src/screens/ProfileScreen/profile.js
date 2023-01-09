@@ -88,6 +88,7 @@ const Profile = ({ navigation, route }) => {
                 fetchUserId()
             // if(id != 0)
             //     fetchUserData()
+            fetchUserData()
         }, [])
     )
     useEffect(() => {
@@ -210,7 +211,7 @@ const Profile = ({ navigation, route }) => {
                         </View>
                         {other ?
                             <View style={styles.flex}>
-                                <CustomButton width='30%' text={'Contact'} onPress={onContactPress} />
+                                <CustomButton width='27%' text={'Contact'} onPress={onContactPress} />
                                 <CustomButton width='25%' text={'Rate'} onPress={onRatePress} />
                                 <CustomButton width='25%' text={'Report'} onPress={onReportPress} />
                             </View> : <View style={styles.flex}>
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     },
     text: {
         color: 'white',
-        fontFamily: 'kanyon-medium',
+        // fontFamily: 'kanyon-medium',
         fontSize: 16,
         lineHeight: 25,
         textAlign: 'center',

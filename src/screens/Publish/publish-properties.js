@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect} from 'react'
 import CustomHeader from '../../components/Header/header'
 import Checkbox from 'expo-checkbox'
 import Ionicon from 'react-native-vector-icons/Ionicons'
@@ -11,15 +11,19 @@ import NoAnimal from '../../../assets/myIcons/no-pets.png'
 import NoChildren from '../../../assets/myIcons/children.png'
 import AC from '../../../assets/myIcons/air-conditioner.png'
 import CustomButton from '../../components/CustomButton'
+import Male from '../../../assets/myIcons/male.png'
+import * as SecureStore from 'expo-secure-store'
 
 const PublishProperties = ({ navigation, route }) => {
   const [onlyTwo, setOnlyTwo] = useState(false)
   const [noSmoke, setNoSmoke] = useState(false)
   const [girlsOnly, setGirlsOnly] = useState(false)
+  const [guysOnly, setGuysOnly] = useState(false)
   const [disabled, setDisabled] = useState(false)
   const [noPets, setNoPets] = useState(false)
   const [noChildren, setNoChildren] = useState(false)
   const [ac, setAc] = useState(false)
+  const [gender, setGender] = useState('')
 
   const onPress = () => {
     navigation.navigate('Publish-Number', {
@@ -33,6 +37,7 @@ const PublishProperties = ({ navigation, route }) => {
       onlyTwo: onlyTwo,
       noSmoke: noSmoke,
       girlsOnly: girlsOnly,
+      guysOnly: guysOnly,
       disabled: disabled,
       noPets: noPets,
       noChildren: noChildren,
@@ -40,6 +45,14 @@ const PublishProperties = ({ navigation, route }) => {
     })
   }
 
+  useEffect(() => {
+    const fetchGender = async() =>{
+      const user = await SecureStore.getItemAsync('user')
+      const jsonUser = JSON.parse(user)
+      setGender(jsonUser.gender)
+    }
+    fetchGender()
+  }, [])
   return (
     <ScrollView style={styles.root}>
       <CustomHeader text={'Ride Properties'} />
@@ -69,7 +82,9 @@ const PublishProperties = ({ navigation, route }) => {
             color={'#1093c9'}
           />
         </View>
-        <View style={styles.propContainer}>
+        {
+          gender == 'female'?
+          <View style={styles.propContainer}>
           <Image source={Female} style={styles.icon} resizeMode="contain" />
           <Text style={styles.text}> Girls only</Text>
           <Checkbox
@@ -78,7 +93,20 @@ const PublishProperties = ({ navigation, route }) => {
             style={styles.checkbox}
             color={'#1093c9'}
           />
-        </View>
+        </View>: 
+        <View style={styles.propContainer}>
+        <Image source={Male} style={styles.icon} resizeMode="contain" />
+        <Text style={styles.text}> Guys only</Text>
+        <Checkbox
+          value={guysOnly}
+          onValueChange={setGuysOnly}
+          style={styles.checkbox}
+          color={'#1093c9'}
+        />
+      </View>
+
+        }
+        
         <View style={styles.propContainer}>
           <Image source={Disabled} style={styles.icon} resizeMode="contain" />
           <Text style={styles.text}> Disabled seat available</Text>

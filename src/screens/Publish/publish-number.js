@@ -35,7 +35,8 @@ const PublishNumber = ({ navigation, route }) => {
             noPets: route.params.noPets,
             seatForDisabled: route.params.disabled,
             noChildren: route.params.noChildren,
-            girlsOnly: route.params.girlsOnly, 
+            girlsOnly: route.params.girlsOnly,
+            guysOnly: route.params.guysOnly,
             route: route.params.selectedRoute
         }
         console.log(data)
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 60,
-        fontFamily: 'kanyon-medium'
+        // fontFamily: 'kanyon-medium'
     },
     text2: {
         fontFamily: 'kanyon-medium',

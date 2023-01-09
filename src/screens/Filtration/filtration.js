@@ -26,6 +26,7 @@ const Filtration = ({ navigation, route }) => {
     const [before8, setBefore8] = useState(false)
     const [between, setBetween] = useState(false)
     const [after4, setAfter4] = useState(false)
+    const [guysOnly, setGuysOnly] = useState(false)
 
     const setClosestToOriginTrue = (val) => {
         setClosestToOrigin(val)
@@ -74,7 +75,8 @@ const Filtration = ({ navigation, route }) => {
                         (!disabled || (disabled && properties.includes('seatForDisabled'))) &&
                         (!noPets || (noPets && properties.includes('noPets'))) &&
                         (!noChildren || (noChildren && properties.includes('noChildren'))) &&
-                        (!ac || (ac && properties.includes('AC')))
+                        (!ac || (ac && properties.includes('AC'))) &&
+                        (!guysOnly || (guysOnly && properties.includes('guysOnly')))
                     )
                 )
             }
@@ -162,6 +164,15 @@ const Filtration = ({ navigation, route }) => {
                             <Checkbox
                                 value={girlsOnly}
                                 onValueChange={setGirlsOnly}
+                                style={styles.checkbox}
+                                color={'#1093c9'}
+                            />
+                        </View>
+                        <View style={styles.propContainer}>
+                            <Text style={styles.text}> Guys Only </Text>
+                            <Checkbox
+                                value={guysOnly}
+                                onValueChange={setGuysOnly}
                                 style={styles.checkbox}
                                 color={'#1093c9'}
                             />

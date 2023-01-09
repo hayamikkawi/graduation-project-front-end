@@ -5,6 +5,7 @@ import ProfilePic from '../ProfilePicture/profile-pic';
 import CarSeat from '../../../assets/myIcons/car-chair.png'
 import NoSmoke from '../../../assets/myIcons/no-smoke.png'
 import Female from '../../../assets/myIcons/female.png'
+import Male from '../../../assets/myIcons/male.png'
 import Disabled from '../../../assets/myIcons/disabled.png'
 import NoAnimal from '../../../assets/myIcons/no-pets.png'
 import NoChildren from '../../../assets/myIcons/children.png'
@@ -26,7 +27,7 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
     const icons = {
         'noSmoking': NoSmoke, 'girlsOnly': Female,
         'seatForDisabled': Disabled, 'noPets': NoAnimal, 'noChildren': NoChildren,
-        'AC': AC, 'middleSeatEmpty': CarSeat
+        'AC': AC, 'middleSeatEmpty': CarSeat, 'guysOnly': Male
     }
     const onViewRoutePress =() =>{
         //console.log(ride?.rideProperty?.route)
@@ -55,7 +56,7 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
             {(asPassenger || asDriver) &&
                 <View style={styles.container}>
                     <CustomText text={'On:'} size={18} />
-                    <Text style={styles.text}>{ride.date}</Text>
+                    <Text style={[styles.text, {fontFamily: 'Arial'}]}>{ride.date}</Text>
                 </View>
             }
             {!nextIcon &&

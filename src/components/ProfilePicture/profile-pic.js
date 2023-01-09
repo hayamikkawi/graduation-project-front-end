@@ -1,7 +1,7 @@
 import { View, Image, StyleSheet } from 'react-native'
 import React from 'react'
 
-const ProfilePic = ({ radius, source, style }) => {
+const ProfilePic = ({ radius, source, style, margin }) => {
     return (
         <View>
             <Image

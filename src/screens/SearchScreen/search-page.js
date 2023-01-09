@@ -19,6 +19,7 @@ const SearchPage = ({ navigation }) => {
     const [numberOfPassengers, setNumberOfPassengers] = useState(0)
     const [date, setDate] = useState(new Date())
     const [isError, setIsError] = useState(false)
+    const [range, setRange] = useState(5)
     var error = false
 
     const changeDest = (dest, destId) => {
@@ -35,6 +36,9 @@ const SearchPage = ({ navigation }) => {
         } else {
             setNumberOfPassengers(newVal)
         }
+    }
+    const onChangeRange = (newVal) => {
+        setRange(newVal)
     }
     const setDateVal = (event, newDate) => {
         setDate(newDate)
@@ -59,7 +63,8 @@ const SearchPage = ({ navigation }) => {
                 sourceId,
                 destinationId,
                 numberOfPassengers,
-                date: date
+                date: date, 
+                range: range*1000
             }, {
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -137,6 +142,15 @@ const SearchPage = ({ navigation }) => {
                                 value={numberOfPassengers}
                             />
                         </View>
+                        <View style={styles.inputContainer}>
+                            <Ionicons name="search" size={25} color={"gray"} />
+                            <CustomInput
+                                placeholder={'Searching Range - Default 5 km'}
+                                numeric
+                                onChangeText={onChangeRange}
+                                value={range}
+                            />
+                        </View>
                         <View style={styles.customInputContainer}>
                             <Ionicons name="calendar-outline" size={25} color={"gray"} />
                             <View style={styles.datePicker}>
@@ -172,7 +186,7 @@ const styles = StyleSheet.create({
     },
     container: {
         width: '80%',
-        marginTop: '-10%',
+        marginTop: '-15%',
         borderTopLeftRadius: '20%',
         borderTopRightRadius: '20%',
         backgroundColor: 'rgba(26,29,29, 0.8)',
