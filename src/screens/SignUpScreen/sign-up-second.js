@@ -30,7 +30,6 @@ const SignUpScreen2 = ({ navigation, route }) => {
                 return;
             }
             const token = (await Notifications.getExpoPushTokenAsync()).data;
-            ///console.log(token);
             setExpoPushToken(token)
             await SecureStore.setItemAsync('expoToken', token)
         } else {
@@ -60,7 +59,7 @@ const SignUpScreen2 = ({ navigation, route }) => {
             email: route.params.email,
             mobileNumber: route.params.mobileNumber,
             gender: gender,
-            dateOfBirth: dateOfBirth, 
+            dateOfBirth: dateOfBirth,
             pushToken: expoPushToken
         })
     }
@@ -74,7 +73,7 @@ const SignUpScreen2 = ({ navigation, route }) => {
             mobileNumber: route.params.mobileNumber,
             role: "user",
             gender: gender,
-            dateOfBirth: dateOfBirth, 
+            dateOfBirth: dateOfBirth,
             pushToken: expoToken
         }).then(async (res) => {
             if (res.status !== 201) {

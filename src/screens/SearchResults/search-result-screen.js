@@ -28,11 +28,11 @@ const SearchResult = ({ navigation, route }) => {
       <View style={styles.secondContainer}>
         <View style={styles.flex}>
           <Text style={styles.text}>Expected Distance: </Text>
-          <Text style={styles.text}>{expectedData.distance} Meters</Text>
+          <Text style={styles.text1}>{expectedData.distance} Meters</Text>
         </View>
         <View style={styles.flex}>
           <Text style={styles.text}>Expected Time: </Text>
-          <Text style={styles.text}>{expectedData.time}</Text>
+          <Text style={styles.text1}>{expectedData.time}</Text>
         </View>
       </View>
       {(searchResult.length == 0) && <NoResults text={'No results found'} />}
@@ -71,6 +71,11 @@ const styles = StyleSheet.create({
     fontFamily: 'kanyon-medium', 
     color: 'gray', 
     fontSize: 15
+  }, 
+  text1:{
+    color: 'gray', 
+    fontSize: 15, 
+    fontFamily: 'Arial'
   }
 })
 export default SearchResult

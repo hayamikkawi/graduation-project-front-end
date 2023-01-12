@@ -49,7 +49,9 @@ const SearchResultExpanded = ({ route, navigation }) => {
         }).then((res) => {
             // console.log('result' + res.data)
             if (res.status == 200) {
-                setNumberOfSeats(numberOfSeats - numberOfPassengersToReserve)
+                if(ride.rideProperty.bookingInstantly){
+                    setNumberOfSeats(numberOfSeats - numberOfPassengersToReserve)
+                }
                 setModalVisible(true)
                 // navigation.navigate('Search1')
 

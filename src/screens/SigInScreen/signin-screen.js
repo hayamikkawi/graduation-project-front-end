@@ -94,7 +94,6 @@ const SignInScreen = ({ navigation }) => {
                         setError("Incorrect username or password");
                     } else {
                         const jsonRes = await res.json();
-                        console.log(res)
                         onLoggedIn(jsonRes.token);
                         setIsError(false);
                         setError(jsonRes.message);

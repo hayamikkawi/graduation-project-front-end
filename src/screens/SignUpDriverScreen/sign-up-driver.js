@@ -110,7 +110,7 @@ const SignUpDriver = ({ route, navigation }) => {
   const onLoggedIn = async (token) => {
     await SecureStore.setItemAsync('secureToken', token);
   }
-  const onSignupPressed = async() => {
+  const onSignupPressed = async () => {
     validate()
     if (!isValid) return
     await registerForPushNotificationsAsync()
@@ -122,7 +122,7 @@ const SignUpDriver = ({ route, navigation }) => {
       mobileNumber: route.params.mobileNumber,
       role: "driver",
       gender: route.params.gender,
-      dateOfBirth: route.params.dateOfBirth, 
+      dateOfBirth: route.params.dateOfBirth,
       pushToken: expoToken
     }).then(async (res) => {
       if (res.status !== 201) {
@@ -221,7 +221,7 @@ const SignUpDriver = ({ route, navigation }) => {
             message='Your request to become a driver is sent!'
             onPress={() => {
               setSuccess(false)
-             // navigation.navigate('Publish-Source')
+              // navigation.navigate('Publish-Source')
             }}
           />
           <View style={styles.customContainer}>

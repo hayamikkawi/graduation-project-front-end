@@ -44,7 +44,7 @@ const SignUpScreen = ({ navigation }) => {
   }
   const onNextPressed = () => {
     validate()
-    if (! isValid) return
+    if (!isValid) return
     else {
       navigation.navigate('Sign Up2', {
         username: username,
