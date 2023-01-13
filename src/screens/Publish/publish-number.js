@@ -39,13 +39,11 @@ const PublishNumber = ({ navigation, route }) => {
             guysOnly: route.params.guysOnly,
             route: route.params.selectedRoute
         }
-        console.log(data)
         axios.post(`${API_URL}/ride/publish`, data, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
         }).then((res) => {
-            console.log(res.data)
             if (res.status === 201) {
                 setModalVisible(true)
                 navigation.navigate('Publish')

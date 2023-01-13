@@ -46,7 +46,6 @@ const SearchPage = ({ navigation }) => {
     const validate = () => {
         if (source.trim() == '' || destination.trim() == '' || numberOfPassengers == 0) {
             setIsError(true)
-            console.log('error')
             error = true
         } else {
             setIsError(false)
@@ -57,14 +56,12 @@ const SearchPage = ({ navigation }) => {
         if (error) return
         else {
             const token = await SecureStore.getItemAsync('secureToken')
-            console.log('number of passengers')
-            console.log(parseInt(numberOfPassengers))
             axios.post(`${API_URL}/ride/search`, {
                 sourceId,
                 destinationId,
                 numberOfPassengers,
-                date: date, 
-                range: range*1000
+                date: date,
+                range: range * 1000
             }, {
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -74,24 +71,24 @@ const SearchPage = ({ navigation }) => {
                 if (res.status == 400) {
 
                 } else if (res.status == 200) {
-                    
+
                     const data = res.data
-                    var expectedData = {'distance': 0, 'time': 0}
-                    if(data.length > 0){
-                         expectedData = res.data.slice(-1)[0]
-                        // console.log(expectedData)
+                    var expectedData = { 'distance': 0, 'time': 0 }
+                    if (data.length > 0) {
+                        expectedData = res.data.slice(-1)[0]
+
                         data.pop()
-                    } 
-                    console.log(data)
-                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers, expectedData: expectedData})
+                    }
+                    // console.log(data)
+                    navigation.navigate('SearchResult', { data: data, numberOfPassengers: numberOfPassengers, expectedData: expectedData })
                 }
 
             }).catch((err) => {
-                if(err.response && err.response.status == 404){
+                if (err.response && err.response.status == 404) {
                     const data = []
-                    const expectedData = {'dictance': '', 'time': ''}
-                    navigation.navigate('SearchResult', {data: data, numberOfPassengers: numberOfPassengers, expectedData: expectedData })
-                } 
+                    const expectedData = { 'dictance': '', 'time': '' }
+                    navigation.push('SearchResult', { data: data, numberOfPassengers: numberOfPassengers, expectedData: expectedData })
+                }
             })
         }
     }

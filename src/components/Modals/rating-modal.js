@@ -13,7 +13,6 @@ const RatingModal = ({ modalVisible, onPress, userId }) => {
     const [rating, setRating] = useState(0)
     const onOkPress = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
-        console.log(userId)
         axios.post(`${API_URL}/user/rating/${userId}`, {
             comment,
             rate: rating

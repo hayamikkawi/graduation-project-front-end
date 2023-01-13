@@ -53,18 +53,16 @@ const Profile = ({ navigation, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const fetchUserId = async () => {
-                console.log('fetching data')
                 if (!other) {
                     const userString = await SecureStore.getItemAsync('user')
                     const user = JSON.parse(userString)
-                    console.log('id: ' + user.id)
                     setId(user.id)
                     setRole(user.role)
                 }
             }
             const fetchUserData = async () => {
                 const token = await SecureStore.getItemAsync('secureToken')
-                console.log(`${API_URL}/users/profile/${id}`)
+                // console.log(`${API_URL}/users/profile/${id}`)
                 axios.get(`${API_URL}/users/profile/${id}`, {
                     headers: {
                         'Authorization': 'Bearer ' + token
@@ -86,15 +84,15 @@ const Profile = ({ navigation, route }) => {
             }
             if (!other)
                 fetchUserId()
-            // if(id != 0)
-            //     fetchUserData()
-            fetchUserData()
+            if(id != 0)
+                fetchUserData()
+            // fetchUserData()
         }, [])
     )
     useEffect(() => {
         const fetchUserData = async () => {
             const token = await SecureStore.getItemAsync('secureToken')
-            console.log(`${API_URL}/users/profile/${id}`)
+            // console.log(`${API_URL}/users/profile/${id}`)
             axios.get(`${API_URL}/users/profile/${id}`, {
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -119,7 +117,6 @@ const Profile = ({ navigation, route }) => {
     }, [id, role])
 
     const onEditPress = () => {
-        console.log('edit')
         navigation.navigate('Profile-Edit', {
             user,
             setUser,
@@ -174,7 +171,6 @@ const Profile = ({ navigation, route }) => {
         setRating(true)
     }
     const onReviewerPress = (userId) => {
-        console.log('visiting profile')
         navigation.push('Profile-Other', {
             id: userId,
             other: true,
@@ -211,9 +207,9 @@ const Profile = ({ navigation, route }) => {
                         </View>
                         {other ?
                             <View style={styles.flex}>
-                                <CustomButton width='27%' text={'Contact'} onPress={onContactPress} />
+                                <CustomButton width='28%' text={'Contact'} onPress={onContactPress} />
                                 <CustomButton width='25%' text={'Rate'} onPress={onRatePress} />
-                                <CustomButton width='25%' text={'Report'} onPress={onReportPress} />
+                                <CustomButton width='28%' text={'Report'} onPress={onReportPress} />
                             </View> : <View style={styles.flex}>
                                 <CustomButton width='20%' icon={'build'} onPress={onEditPress} />
                                 {(user.phoneVerified == true && user.emailVerified == true) ?

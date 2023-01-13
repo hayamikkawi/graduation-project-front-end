@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, Image } from 'react-native'
+import { Pressable, StyleSheet, Image } from 'react-native'
 import React from 'react'
 import Upload from '../../../assets/upload3.png'
 

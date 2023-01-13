@@ -1,7 +1,6 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete/GooglePlacesAutocomplete'
-import Ionicon from 'react-native-vector-icons/Ionicons'
+
 
 const Google_Key = require('../../Google-Key')
 const MapSearch = ({ navigation, route, onPress }) => {
@@ -23,11 +22,11 @@ const MapSearch = ({ navigation, route, onPress }) => {
                     borderColor: 'gray',
                 },
                 row: {
-                   
+
                 },
 
                 containerResultRow: {
-                
+
                 }
             }}
             placeholder="Search"

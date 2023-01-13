@@ -25,7 +25,6 @@ const PublishScreenMain = () => {
                     'Authorization': 'Bearer '+ token
                 }
             }).then((res)=>{
-                console.log(res.data)
                 setRole(res.data)
             })
             // setRole(user.role)

@@ -16,7 +16,6 @@ const ChatScreen = ({ navigation, route }) => {
             senderId: sender._id,
             receiverId: receiver._id
         }
-        console.log(ids)
         socket.emit("findChat", ids);
         socket.on("foundChat", (roomChats) => {
             setChatMessages(roomChats)
@@ -82,7 +81,6 @@ const ChatScreen = ({ navigation, route }) => {
             },
             createdAt: { hour, mins }
         }
-        // console.log(newMessage)
         socket.emit("newMessage", newMessage);
     };
 

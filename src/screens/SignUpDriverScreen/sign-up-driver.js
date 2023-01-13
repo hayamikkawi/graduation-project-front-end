@@ -45,7 +45,6 @@ const SignUpDriver = ({ route, navigation }) => {
     let fileToUpload
     let url
     if (file == 'driverLicense') {
-      console.log('driverLicense')
       url = 'uploadDrivingLicense'
       fileToUpload = driverLicense
     } else if (file == 'carLicense') {
@@ -57,7 +56,6 @@ const SignUpDriver = ({ route, navigation }) => {
     }
     const data = new FormData()
     data.append('filename', file)
-    console.log(fileToUpload.uri)
     data.append('file', {
       uri: fileToUpload.uri,
       type: fileToUpload.type,
@@ -71,7 +69,6 @@ const SignUpDriver = ({ route, navigation }) => {
 
     }).then((res) => {
       flag = true
-      console.log(res.status)
     }).catch((err) => {
       flag = false
       console.log(err)
@@ -91,7 +88,6 @@ const SignUpDriver = ({ route, navigation }) => {
         return;
       }
       const token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
       setExpoPushToken(token)
       await SecureStore.setItemAsync('expoToken', token)
     } else {
@@ -126,7 +122,7 @@ const SignUpDriver = ({ route, navigation }) => {
       pushToken: expoToken
     }).then(async (res) => {
       if (res.status !== 201) {
-        console.log(res.data)
+        
         console.log(res.status)
       } else {
         onLoggedIn(res.data.token);
@@ -157,7 +153,7 @@ const SignUpDriver = ({ route, navigation }) => {
         'Authorization': 'Bearer ' + token
       }
     }).then(async (res) => {
-      console.log(res)
+      
       if (res.status == 200) {
         uploadImage('driverLicense', token)
         uploadImage('carLicense', token)

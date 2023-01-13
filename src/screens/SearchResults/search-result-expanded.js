@@ -22,9 +22,7 @@ const SearchResultExpanded = ({ route, navigation }) => {
     const asPassenger = route.params.asPassenger
     const asDriver = route.params.asDriver
     const passengers = ride.passengers
-   // const passengers = []
-   console.log('ride is:')
-   console.log(ride.passengers)
+
     if (!asDriver) {
         var imageURL = ''
         const b = new Buffer.from(ride.user.profilePicture, 'binary').toString('base64')
@@ -38,7 +36,6 @@ const SearchResultExpanded = ({ route, navigation }) => {
 
     const onReservePressed = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
-        console.log('reserve')
         axios.post(`${API_URL}/ride/reserve`, {
             rideId: ride.rideProperty.rideId,
             numberOfPassengers: numberOfPassengersToReserve
@@ -47,7 +44,6 @@ const SearchResultExpanded = ({ route, navigation }) => {
                 'Authorization': 'Bearer ' + token
             }
         }).then((res) => {
-            // console.log('result' + res.data)
             if (res.status == 200) {
                 if(ride.rideProperty.bookingInstantly){
                     setNumberOfSeats(numberOfSeats - numberOfPassengersToReserve)
@@ -61,14 +57,12 @@ const SearchResultExpanded = ({ route, navigation }) => {
         })
     }
     const onVisitPressed = () => {
-        console.log(ride.user.id)
         navigation.navigate('Profile-Main', {
             id: ride.user.id,
             other: true
         })
     }
     const onPassengerPress = (userId) => {
-        console.log(userId)
         navigation.navigate('Profile-Main', {
             id: userId,
             other: true
@@ -76,7 +70,6 @@ const SearchResultExpanded = ({ route, navigation }) => {
     }
     const onDeleteRide = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
-        console.log(token)
         axios.delete(`${API_URL}/ride/delete/${ride.id}`, {
             headers: {
                 'Authorization': 'Bearer ' + token

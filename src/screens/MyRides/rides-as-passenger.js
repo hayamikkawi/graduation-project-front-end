@@ -1,5 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { ScrollView } from 'react-native'
+import React, { useState } from 'react'
 import styles from './rides-styles'
 import { useFocusEffect } from '@react-navigation/native'
 import SearchResultCard from '../../components/Cards/search-result-card'

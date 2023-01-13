@@ -14,7 +14,6 @@ const RouteMap = ({ navigation, route }) => {
     }
   })
   const source = route.params.origin
-  //console.log(points.text())
   return (
     <View style={styles.root}>
       <MapView

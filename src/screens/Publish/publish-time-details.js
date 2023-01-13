@@ -14,19 +14,19 @@ const PublishTimeDetails = ({ navigation, route }) => {
     const [amPm, setAmPm] = useState('am')
     const [timeVal, setTimeVal] = useState('')
     const onPress = () => {
-       // console.log(`${selectedHours}:${selectedMinutes} ${amPm}`)
+        // console.log(`${selectedHours}:${selectedMinutes} ${amPm}`)
         navigation.navigate('Publish-Properties', {
             sourceDescription: route.params.sourceDescription,
             sourceId: route.params.sourceId,
             destDescription: route.params.destDescription,
             destId: route.params.destId,
             date: route.params.date,
-            selectedRoute: route.params.selectedRoute, 
-            time: amPm.toLowerCase() == 'pm'? `${(selectedHours + 12).toLocaleString('en-GB', {
+            selectedRoute: route.params.selectedRoute,
+            time: amPm.toLowerCase() == 'pm' ? `${(selectedHours + 12).toLocaleString('en-GB', {
                 minimumIntegerDigits: 2,
-                })}:${selectedMinutes.toLocaleString('en-GB', {
+            })}:${selectedMinutes.toLocaleString('en-GB', {
                 minimumIntegerDigits: 2
-            })}` : `${selectedHours.toLocaleString('en-GB',{ minimumIntegerDigits : 2})}:${selectedMinutes.toLocaleString('en-GB', {minimumIntegerDigits: 2})}`
+            })}` : `${selectedHours.toLocaleString('en-GB', { minimumIntegerDigits: 2 })}:${selectedMinutes.toLocaleString('en-GB', { minimumIntegerDigits: 2 })}`
             // ${amPm}`
         })
     }
@@ -63,7 +63,6 @@ const PublishTimeDetails = ({ navigation, route }) => {
                     isAmpm={true}
                     onChange={(newValue) => {
                         setSelectedHours(newValue.hours);
-                        console.log(newValue.hours)
                         setSelectedMinutes(newValue.minutes);
                         setAmPm(newValue.ampm)
                     }}

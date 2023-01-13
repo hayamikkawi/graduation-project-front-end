@@ -15,7 +15,7 @@ import PublishSource from './src/screens/Publish/publish-source.js';
 
 export default function App() {
   const [isSigned, setIsSigned] = useState(false)
-  
+  console.disableYellowBox = true
   useEffect(() => {
     async function isLoggedIn() {
       // await SecureStore.setItemAsync('secureToken', '')

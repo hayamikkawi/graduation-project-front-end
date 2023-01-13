@@ -55,7 +55,6 @@ const SignInScreen = ({ navigation }) => {
     };
     const validate = () => {
         if (username.trim() == '' || password.trim() == '') {
-            console.log('Invalid')
             isValidated = false
             setValid(false)
         } else {
@@ -74,7 +73,6 @@ const SignInScreen = ({ navigation }) => {
         }
         await registerForPushNotificationsAsync()
         const expoToken = await SecureStore.getItemAsync('expoToken')
-        console.log(expoToken)
         const payload = {
             username,
             password,
@@ -103,17 +101,14 @@ const SignInScreen = ({ navigation }) => {
                     }
 
                 } catch (err) {
-                    console.log('err')
                     console.log(err);
                 };
             })
             .catch(err => {
-                console.log('err')
                 console.log(JSON.stringify(err));
             });
     }
     const onForgotPasswordPressed = () => {
-        console.warn('forget')
         const api_url = API_URL.split(':')
         const url = api_url[0] + ':' + api_url[1] + ':3001'
         axios.post(`${API_URL}/users/login/forgotMyPassword`, {

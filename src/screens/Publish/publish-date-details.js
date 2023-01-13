@@ -12,7 +12,6 @@ const PublishDateDetails = ({navigation, route}) => {
         setDate(dateVal)
     }
     const onPress= () => {
-        console.log(date.toDateString())
         navigation.navigate('Publish-Time-Details', {
             sourceDescription: route.params.sourceDescription, 
             sourceId: route.params.sourceId, 

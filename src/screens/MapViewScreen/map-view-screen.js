@@ -1,11 +1,11 @@
 import React from 'react'
 import MapView from 'react-native-maps';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions } from 'react-native';
 import { Marker } from 'react-native-maps';
 
-const MapViewScreen = ({navigation, route}) => {
+const MapViewScreen = ({ navigation, route }) => {
   const latlng = {
-    latitude: route.params.latitude, 
+    latitude: route.params.latitude,
     longitude: route.params.longitude
   }
   const name = route.params.name
@@ -15,7 +15,7 @@ const MapViewScreen = ({navigation, route}) => {
         <Marker
           coordinate={latlng}
           title={name}
-          //description={marker.description}
+        //description={marker.description}
         />
       </MapView>
     </View>

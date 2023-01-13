@@ -7,7 +7,6 @@ import PublishScreenMain from '../Publish/publish-screen-main';
 import ProfileScreenMain from '../ProfileScreen/profile-screen-main';
 import MyRidesScreenMain from '../MyRides/my-rides-screen-main';
 import * as Notifications from 'expo-notifications'
-import * as Device from 'expo-device'
 import ChatScreenMain from '../Chatting/chatting-screen-main';
 // import registerForPushNotificationsAsync from '../../functions/register-for-push-notifications';
 
@@ -25,8 +24,7 @@ const HomeScreen = ({ navigation, route }) => {
 
     //let { toScreen } = notification.data;
     //navigation.navigation(toScreen)
-    console.log('receivedNotification:')
-    console.log(receivedNotification)
+
     setNotification(receivedNotification)
   };
 

@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 
-const CustomText = ({ text, borderRight, size = 15, color = '#1093c9', borderBottom = false }) => {
+const CustomText = ({ text, borderRight, size = 15, color = '#1093c9', borderBottom = false, fontFamily = 'kanyon-bold' }) => {
   return (
     <View style={[
       borderRight ? { borderRightWidth: 1 } : {},
       borderBottom ? { borderBottomWidth: 1 } : {},
       styles.container
-      ]}>
-      <Text style={[styles.text, {fontSize : size}, {color: color}]}>{text}</Text>
+    ]}>
+      <Text style={[styles.text, { fontSize: size }, { color: color }, { fontFamily: fontFamily }]}>{text}</Text>
     </View>
   )
 }
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#1093c9',
-    fontFamily: 'kanyon-bold',
+    // fontFamily: 'kanyon-bold',
     paddingBottom: '5%',
     paddingTop: '5%',
     paddingRight: '2%',

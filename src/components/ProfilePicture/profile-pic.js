@@ -14,8 +14,8 @@ const ProfilePic = ({ radius, source, style, margin }) => {
 const styles = StyleSheet.create({
     img: {
         borderRadius: '100%',
-        borderWidth: 2, 
-        borderColor: '#1093c9', 
+        borderWidth: 2,
+        borderColor: '#1093c9',
         margin: '5%'
     }
 })

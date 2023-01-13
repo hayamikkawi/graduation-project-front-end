@@ -35,7 +35,6 @@ const ProfileEdit = ({ navigation, route }) => {
         requestPermession()
     }, [])
     const onPPEditPressed = () => {
-        console.log('hey')
         const pic = new FormData()
         pic.append('filename', 'profilePic')
         pic.append('file', {
@@ -71,10 +70,8 @@ const ProfileEdit = ({ navigation, route }) => {
             setProfilePic(res)
         } catch (err) {
             if (res.cancelled) {
-                console.log('cancelled')
                 setDisabled(true)
             }
-            console.log(JSON.stringify(err))
             return <ErrorMessage message={'An error occured.'} />
         }
     }

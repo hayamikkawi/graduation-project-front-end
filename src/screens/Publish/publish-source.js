@@ -9,10 +9,8 @@ import axios from 'axios'
 const PublishSource = ({ navigation, route }) => {
     const getLatLong = async(id) => {
         let result = {}
-        console.log(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${id}&key=${Google_Key}`)
         await axios.get(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${id}&key=${Google_Key}`).
             then((res) => {
-                console.log(res.data.result.geometry.location)
                 result =  (res.data?.result?.geometry?.location)
             }).catch((err) => {
                 console.log(err)
@@ -21,7 +19,7 @@ const PublishSource = ({ navigation, route }) => {
     }
     const onChooseSource = async (data) => {
         const latLong = await getLatLong(data.place_id)
-        console.log(latLong)
+       
         const latitudeLongitude = {
             latitude: latLong.lat, 
             longitude: latLong.lng

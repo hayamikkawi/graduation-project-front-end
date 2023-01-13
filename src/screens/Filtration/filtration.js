@@ -61,10 +61,10 @@ const Filtration = ({ navigation, route }) => {
     }
     const onFilterPressed = () => {
         const { rides } = route.params
-        console.log(rides)
+
         var newRides = rides.filter((ride) => {
             if (ride.rideProperty) {
-                const properties = Object.keys(ride.rideProperty).filter((property)=>{
+                const properties = Object.keys(ride.rideProperty).filter((property) => {
                     return ride.rideProperty[property]
                 })
                 return (

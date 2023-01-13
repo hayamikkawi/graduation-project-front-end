@@ -18,7 +18,6 @@ const PublishDestination = ({ navigation, route }) => {
   }
   const onChooseDestination= async (data) => {
     const latLong = await getLatLong(data.place_id)
-    console.log(latLong)
     const latitudeLongitude = {
       latitude: latLong.lat, 
       longitude: latLong.lng

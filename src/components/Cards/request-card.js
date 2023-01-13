@@ -25,13 +25,11 @@ const RequestCard = ({ navigation, request, removeRequest, passenger }) => {
             }
         }).then((res) => {
             if (res.status == 200) {
-                console.log('Accepted')
-                removeRequest(request.id, passenger.userId)
+                removeRequest(passenger.id)
             }
         }).catch((err) => {
             console.log(err)
         })
-
     }
     const onDenyPressed = async () => {
         const token = await SecureStore.getItemAsync('secureToken')
@@ -44,14 +42,13 @@ const RequestCard = ({ navigation, request, removeRequest, passenger }) => {
             }
         }).then((res) => {
             if (res.status == 200) {
-                removeRequest(request.id, passenger.userId)
+                removeRequest(passenger.id)
             }
         }).catch((err) => {
             console.log(err)
         })
     }
     const onProfilePressed = () => {
-        console.log(passenger.userId)
         navigation.navigate('Profile-Other', {
             other: true,
             id: passenger.userId,

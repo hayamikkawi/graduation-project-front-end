@@ -30,7 +30,6 @@ const SearchResultCardInner = ({ ride, nextIcon = true, withDriver = true, navig
         'AC': AC, 'middleSeatEmpty': CarSeat, 'guysOnly': Male
     }
     const onViewRoutePress =() =>{
-        //console.log(ride?.rideProperty?.route)
         navigation.navigate('RouteMap', {
             selectedRoute : ride?.rideProperty?.route, 
             origin: {

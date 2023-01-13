@@ -3,7 +3,7 @@ import React from 'react'
 
 const CustomInput = ({ value, setValue, placeholder, secureTextEntry, numeric = false, onChangeText = null, color = 'black' }) => {
   return (
-    <View style={[styles.container, {borderColor: color}]}>
+    <View style={[styles.container, { borderColor: color }]}>
       <TextInput
         value={value}
         onChangeText={onChangeText ? onChangeText : setValue}
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 17,
     // fontFamily: 'kanyon-medium', 
-    fontFamily: 'Arial', 
+    fontFamily: 'Arial',
     lineHeight: 17
   }
 })

@@ -27,19 +27,17 @@ const AllChatsScreen = ({ navigation }) => {
   const [rooms, setRooms] = useState([])
   useFocusEffect(
     React.useCallback(() => {
-    async function fetchGroups() {
-      const userString = await SecureStore.getItemAsync('user')
-      const user = JSON.parse(userString)
-      console.log(`${API_URL}/chats/${user.id}`)
-      axios.get(`${API_URL}/chats/${user.id}`).then((res) => {
-        //console.log(res.data)
-        setRooms(res.data)
-      }).catch((err) => {
-        console.log("here"+err)
-      })
-    }
-    fetchGroups();
-  }, [])
+      async function fetchGroups() {
+        const userString = await SecureStore.getItemAsync('user')
+        const user = JSON.parse(userString)
+        axios.get(`${API_URL}/chats/${user.id}`).then((res) => {
+          setRooms(res.data)
+        }).catch((err) => {
+          console.log("here" + err)
+        })
+      }
+      fetchGroups();
+    }, [])
   );
 
   useEffect(() => {

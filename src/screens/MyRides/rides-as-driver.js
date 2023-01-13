@@ -20,7 +20,6 @@ const RidesAsDriver = ({ navigation, route }) => {
                 }
             }).then((res) => {
                 setRides(res.data.asDriver)
-                console.log(rides)
             }).catch((err) => {
                 if (err.response.status == 404) {
 

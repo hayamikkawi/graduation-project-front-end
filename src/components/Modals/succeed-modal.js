@@ -1,5 +1,5 @@
-import { View, Text, Modal, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Modal } from 'react-native'
+import React from 'react'
 import CustomButton from '../../components/CustomButton'
 import Ionicon from 'react-native-vector-icons/Ionicons'
 import styles from './styles'
@@ -15,7 +15,7 @@ const SucceedModal = ({ modalVisible, setModalVisible, onPress, message }) => {
                 <View style={styles.centeredView}>
                     <View style={styles.succeedModalView}>
                         <View style={styles.flex}>
-                            <Ionicon name='checkmark-circle' color={'#1093c9'} size={50}/>
+                            <Ionicon name='checkmark-circle' color={'#1093c9'} size={50} />
                             <Text style={styles.modalText}>{message}</Text>
                         </View>
                         <View style={styles.modalButtons}>

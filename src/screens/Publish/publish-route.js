@@ -15,7 +15,6 @@ import CustomButton from '../../components/CustomButton';
 
 const PublishRoute = ({ navigation, route }) => {
   const myCoordinates = [route.params.sourceLatLong, route.params.destLatLong]
-  console.log(myCoordinates)
   const [coordinates] = useState(myCoordinates);
   const [ways, setWays] = useState([])
   // useFocusEffect(
@@ -44,8 +43,6 @@ const PublishRoute = ({ navigation, route }) => {
   // )
   useEffect(() => {
     const getDirections = async () => {
-      console.log(`https://maps.googleapis.com/maps/api/directions/json?origin=${coordinates[0].latitude},${coordinates[0].longitude}&`+
-      `destination=${coordinates[1].latitude},${coordinates[1].longitude}&mode=driving&alternatives=true&key=AIzaSyAieM8IXCWExPZ6-GgqxcGtwq4zW_dfFd4`)
       axios.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${coordinates[0].latitude},${coordinates[0].longitude}&`+
       `destination=${coordinates[1].latitude},${coordinates[1].longitude}&mode=driving&alternatives=true&key=${Google_Key}`).then(
         (res) => {
@@ -75,7 +72,6 @@ const PublishRoute = ({ navigation, route }) => {
       getDirections()
   }, [])
   const selectRoute = (route) => {
-    console.log(route.name)
     setWays(current =>
       current.map(obj => {
         if (obj.name == route.name) {
@@ -95,7 +91,6 @@ const PublishRoute = ({ navigation, route }) => {
   }
   const onNextPressed = () => {
     const selectedRoute = getSelectedRoute()
-    console.log(selectedRoute)
     navigation.navigate('Publish-Date-Details', {
       sourceDescription: route.params.sourceDescription,
       sourceId: route.params.sourceId,
@@ -147,7 +142,7 @@ const PublishRoute = ({ navigation, route }) => {
             ways.map((route, index) => {
               return <Pressable onPress={() => selectRoute(route)} key={index}>
                 <View style={styles.flex}>
-                  <CustomText text={route.name} size={15} color='white' />
+                  <CustomText text={route.name} size={15} color='white' fontFamily='Arial' />
                   <Checkbox
                     value={route.isSelected}
                     color={'#1093c9'}

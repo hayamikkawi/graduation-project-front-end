@@ -31,7 +31,6 @@ const SearchScreenMap = ({ route, navigation }) => {
                 language: 'en', // language of the results
             }}
             onPress={(data, details = null) => {
-                console.log(data)
                 navigation.goBack()
                 if(route.params.data === "destination"){
                     route.params.changeDest(data.description, data.place_id)
