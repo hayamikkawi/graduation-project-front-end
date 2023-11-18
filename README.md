@@ -12,3 +12,6 @@ The app supports three types of users: drivers, passengers, and admin.
 4. Passengers can search for rides, sort results by closest to origin/destination, filter results by properties/time.
 5. Report and Rating Systems.
 In addition to these features, Chatting, Cancel Reservations/ Delete Rides, Notifications and more features were implemented. 
+
+
+This repository includes the mobile frontend part of this project, which was developed using React Native.
